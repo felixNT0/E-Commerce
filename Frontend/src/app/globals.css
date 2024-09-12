@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.password-requirements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.requirement {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background-color: transparent;
+  color: #333;
+  font-size: 12px;
+}
+
+.requirement.met {
+  background-color: #216869;
+  color: white;
+}
+
+.requirement.unmet {
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+}
