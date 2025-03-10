@@ -1,0 +1,99 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Backend.Models.Exceptions;
+using EComm.Contracts;
+using EComm.DTOs;
+using EComm.Models;
+using EComm.Models.Exceptions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+
+namespace EComm.Services
+{
+    public class AuthService : IAuthService
+    {
+
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly IJwtTokenService _tokenService;
+        private readonly ILogger _logger;
+        public AuthService(UserManager<AppUser> userManager,
+                            SignInManager<AppUser> signInManager,
+                            IJwtTokenService jwtTokenService, ILogger<AuthService> logger)
+        {
+            _signInManager = signInManager;
+            _userManager = userManager;
+            _tokenService = jwtTokenService;
+            _logger = logger;
+        }
+
+        public async Task<UserDto?> RegisterUser(UserCreationDto userDto)
+        {
+           
+                var user = new AppUser
+                {
+                    FirstName = userDto.FirstName,
+                    LastName = userDto.LastName,
+                    UserName = userDto.UserName,
+                    Email = userDto.Email
+                };
+                var createdUser = await _userManager.CreateAsync(user, userDto.Password);
+                if (createdUser.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, userDto.Role);
+                    return new UserDto
+                    {
+                        Id = user.Id,
+                        Name = user.FirstName + " " + user.LastName,
+                        Role = userDto.Role
+                    };
+
+                }
+
+                var errors = string.Join("; ", createdUser.Errors.Select(e => e.Description));
+                _logger.LogError($"User Registration failed: {errors}");
+                throw new UserNameExistsException($"User Registration failed: {errors}");
+
+        }
+
+        public async Task<LoginDto> LoginUser(UserLoginDto loginDto)
+        {
+            try
+            {
+                var user = await _userManager.FindByNameAsync(loginDto.UserName);
+                if (user is null) 
+                {
+                    _logger.LogError("User not Found");
+                    throw new UserNotFoundException($"User with Username : {loginDto.UserName} Does Not Exist");
+                }
+                var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+                if (!result.Succeeded)
+                {
+                    _logger.LogError($"wrong Password");
+                    throw new InvalidUserCredentialsException("Username or Password is incorrect");
+                }
+                return new LoginDto
+                {
+                    Token = await _tokenService.GenerateToken(user)
+                };
+            }
+            catch(UserNotFoundException)
+            {
+                throw;
+            }
+            catch(InvalidUserCredentialsException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                throw new UserLoginException($"An Error Occured while trying to login the User: {e.Message}");
+            }
+
+
+        }
+    }
+}
