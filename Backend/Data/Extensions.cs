@@ -13,4 +13,16 @@ public static class Extensions
             }
         }
     }
+
+    public static void SeedCategories(this IHost host)
+    {
+        {
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<ApplicationDbContext>();
+                CategoryDbInitializer.Initialize(context);
+            }
+        }
+    }
 }
