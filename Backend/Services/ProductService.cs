@@ -45,7 +45,8 @@ namespace EComm.Services
                                 Price = productDto.Price,
                                 Image = image,
                                 Description = productDto.Description,
-                                Category = category
+                                Category = category,
+                                ImageUrl = image.Url
                             };
 
             await _dbContext.Products.AddAsync(product);
@@ -54,7 +55,7 @@ namespace EComm.Services
             
             return new CreatedProductDto { Id = product.Id,
                                         ProductName= product.Name, 
-                                        ImageUrl = product.Image.Url, 
+                                        ImageUrl = image.Url, 
                                         Price = product.Price,
                                         Category = category.Name
                                         };
@@ -63,7 +64,7 @@ namespace EComm.Services
         public async Task<ProductDto> GetProductByIdAsync(Guid productId)
         {
             Expression<Func<Product, bool>> condition = (p) => p.Id == productId;
-            var product = await  _dbContext.Products.Include(p=>p.Image).Include(p=>p.Category).AsNoTracking().SingleOrDefaultAsync(condition);
+            var product = await  _dbContext.Products.Include(p=>p.Category).AsNoTracking().SingleOrDefaultAsync(condition);
             if (product is null)
             {
                 _logger.LogError($"The product with id: {productId} does not Exist");
@@ -71,7 +72,7 @@ namespace EComm.Services
             }
                 
             return new ProductDto { Id = product.Id, 
-                                    ImageUrl = product.Image?.Url ?? "testUrl",
+                                    ImageUrl = product.ImageUrl ?? "testUrl",
                                     ProductName = product.Name ,
                                     Description = product.Description,
                                     Price = product.Price,
@@ -84,7 +85,6 @@ namespace EComm.Services
             var products =  await _dbContext.Products.Where(p=> p.CategoryId == categoryId)
                                       .AsNoTracking()
                                       .Include(p=> p.Category)
-                                      .Include(p=> p.Image)
                                       .ToListAsync();
 
             if (products is null)
@@ -96,7 +96,7 @@ namespace EComm.Services
                                 {
                                     Id = p.Id,
                                     ProductName = p.Name,
-                                    ImageUrl = p.Image?.Url ?? "testUrl",
+                                    ImageUrl = p.ImageUrl ?? "testUrl",
                                     Price = p.Price,
                                     Description = p.Description,
                                     Category = p.Category?.Name ?? ""                                    
@@ -108,7 +108,6 @@ namespace EComm.Services
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
             var products = await _dbContext.Products
-                                            .Include(p=> p.Image)
                                             .Include(p=>p.Category)
                                             .AsNoTracking()
                                             .ToListAsync();
@@ -120,7 +119,7 @@ namespace EComm.Services
                                 {
                                     Id = p.Id,
                                     ProductName = p.Name,
-                                    ImageUrl = p.Image?.Url ?? "testUrl",
+                                    ImageUrl = p.ImageUrl ?? "testUrl",
                                     Price = p.Price,
                                     Description = p.Description,
                                     Category = p.Category?.Name ?? ""
@@ -168,10 +167,11 @@ namespace EComm.Services
 
                 var newImage = await _imageService.CreateImageAsync(productDto.Image);
                 product.Image = newImage;
+                product.ImageUrl = newImage.Url;
                 
             }
             await _dbContext.SaveChangesAsync();
-            return new ProductDto { Id = product.Id, ProductName = product.Name, Price = product.Price, Description = product.Description, ImageUrl = product.Image?.Url};
+            return new ProductDto { Id = product.Id, ProductName = product.Name, Price = product.Price, Description = product.Description, ImageUrl = product.ImageUrl};
         }
 
         public async Task DeleteProductAsync(Guid id)

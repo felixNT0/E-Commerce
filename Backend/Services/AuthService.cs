@@ -8,6 +8,7 @@ using EComm.DTOs;
 using EComm.Models;
 using EComm.Models.Exceptions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace EComm.Services
@@ -31,69 +32,80 @@ namespace EComm.Services
 
         public async Task<UserDto?> RegisterUser(UserCreationDto userDto)
         {
-           
-                var user = new AppUser
+
+            var user = new AppUser
+            {
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
+                UserName = userDto.UserName,
+                Email = userDto.Email
+            };
+            var createdUser = await _userManager.CreateAsync(user, userDto.Password);
+            if (createdUser.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, userDto.Role);
+                return new UserDto
                 {
-                    FirstName = userDto.FirstName,
-                    LastName = userDto.LastName,
-                    UserName = userDto.UserName,
-                    Email = userDto.Email
+                    Id = user.Id,
+                    Name = user.FirstName + " " + user.LastName,
+                    Role = userDto.Role
                 };
-                var createdUser = await _userManager.CreateAsync(user, userDto.Password);
-                if (createdUser.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(user, userDto.Role);
-                    return new UserDto
-                    {
-                        Id = user.Id,
-                        Name = user.FirstName + " " + user.LastName,
-                        Role = userDto.Role
-                    };
 
-                }
+            }
 
-                var errors = string.Join("; ", createdUser.Errors.Select(e => e.Description));
-                _logger.LogError($"User Registration failed: {errors}");
-                throw new UserNameExistsException($"User Registration failed: {errors}");
+            var errors = string.Join("; ", createdUser.Errors.Select(e => e.Description));
+            _logger.LogError($"User Registration failed: {errors}");
+            throw new UserNameExistsException($"User Registration failed: {errors}");
 
         }
 
         public async Task<LoginDto> LoginUser(UserLoginDto loginDto)
         {
-            try
+
+            var user = await _userManager.FindByNameAsync(loginDto.UserName);
+            if (user is null)
             {
-                var user = await _userManager.FindByNameAsync(loginDto.UserName);
-                if (user is null) 
+                _logger.LogError("User not Found");
+                throw new UserNotFoundException($"User with Username : {loginDto.UserName} Does Not Exist");
+            }
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            if (!result.Succeeded)
+            {
+                _logger.LogError($"wrong Password");
+                throw new InvalidUserCredentialsException("Username or Password is incorrect");
+            }
+            return new LoginDto
+            {
+                Token = await _tokenService.GenerateToken(user)
+            };
+
+
+        }
+
+        public async Task<IEnumerable<UserDto>> GetUsers()
+        {
+            var users = await _userManager.Users.AsNoTracking().ToListAsync();
+            if (users is null)
+            {
+                return [];
+            }
+            List<UserDto> usersDto = [];
+
+            foreach (var u in users)
+            {
+                // methods to get the Users Roles if i can get it using the usersId ?
+                var roles = await _userManager.GetRolesAsync(u);
+                var userRole = roles.FirstOrDefault();
+                var dto = new UserDto
                 {
-                    _logger.LogError("User not Found");
-                    throw new UserNotFoundException($"User with Username : {loginDto.UserName} Does Not Exist");
-                }
-                var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-                if (!result.Succeeded)
-                {
-                    _logger.LogError($"wrong Password");
-                    throw new InvalidUserCredentialsException("Username or Password is incorrect");
-                }
-                return new LoginDto
-                {
-                    Token = await _tokenService.GenerateToken(user)
+                    Id = u.Id,
+                    Name = u.FirstName + " " + u.LastName,
+                    Role = userRole
                 };
-            }
-            catch(UserNotFoundException)
-            {
-                throw;
-            }
-            catch(InvalidUserCredentialsException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-                throw new UserLoginException($"An Error Occured while trying to login the User: {e.Message}");
+                usersDto.Add(dto);
             }
 
-
+            return usersDto;
         }
     }
 }

@@ -21,10 +21,14 @@ namespace EComm.Models
 
         public Image? Image { get; set; }
 
+        public string? ImageUrl { get; set; }
+
         [MaxLength(450)]
         public string? Description { get; set; }
     
         public Category? Category { get; set; }
+
+        public List<Favourite?> Favourites { get; set; } = [];
 
     }
 }

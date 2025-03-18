@@ -18,6 +18,7 @@ builder.Services.AddLogging();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IFavouriteService, FavouriteService>();
 builder.Services.AddHttpContextAccessor();
 
 

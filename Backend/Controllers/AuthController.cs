@@ -12,13 +12,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace EComm.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        public AuthController(IAuthService authService)
+        private readonly ILogger<AuthController> _logger;
+
+        public AuthController(IAuthService authService, ILogger<AuthController> logger)
         {
             _authService = authService;
+            _logger = logger;
         }
 
         [HttpPost("register")]
@@ -62,9 +65,17 @@ namespace EComm.Controllers
             }
             catch(Exception e)
             {
+                _logger.LogError(e.Message);
                 return StatusCode(500, e.Message);
             }
 
+        }
+        [HttpGet("getUsers")]
+
+        public async Task<IActionResult> GetUsers()
+        {
+            var usersDto = await _authService.GetUsers();
+            return Ok(usersDto);
         }
 
     }

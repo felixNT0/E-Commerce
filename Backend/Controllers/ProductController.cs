@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace EComm.Controllers
 {
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("/api/products")]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -21,7 +21,7 @@ namespace EComm.Controllers
             _productService = productService;
         }
 
-        [HttpPost]
+        [HttpPost("createProduct")]
         public async Task<IActionResult> CreateProduct(CreateProductDto productDto)
         {
             if(!ModelState.IsValid)
