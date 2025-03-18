@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EComm.Contracts;
 using EComm.DTOs;
+using EComm.Models.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -33,6 +34,7 @@ namespace EComm.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError($"An Error occured while trying to Add this product to the Users Favourites : {e.Message}");
                 return StatusCode(500, $"An Error occured while trying to Add this product to the Users Favourites : {e.Message}");
             }
 
@@ -43,14 +45,42 @@ namespace EComm.Controllers
         {
             try
             {
+                // TODO: We are going to get the userId from the logiin token and then use it
+                // rather than from the dto contract
                 var favouritesDto = await _favouriteService.GetUsersFavourites(userId);
                 return Ok(favouritesDto);
             }
             catch (Exception e)
             {
-                return StatusCode(500, $"An Error occured while trying to Add this product to the Users Favourites : {e.Message}");
+                _logger.LogError($"An Error occured while trying to get the Users favorite products : {e.Message}");
+                return StatusCode(500, $"An Error occured while trying to get the Users favorite products : {e.Message}");
             }
 
+        }
+
+        [HttpDelete("{productId:Guid}")]
+        public async Task<IActionResult> RemoveProductFromUsersFavourites(RemoveFavouriteDto favouriteDto, Guid productId)
+        {
+            try
+            {
+                // TODO: We are going to get the userId from the logiin token and then use it
+                // rather than from the dto contract
+                await _favouriteService.RemoveFavourite(favouriteDto.UserId, productId);
+                return NoContent();
+            }
+            catch (FavouriteNotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (ProductNotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"An Error occured while trying to Delete the product with id {productId} from the Users favorites  : {e.Message}");
+                return StatusCode(500, e.Message);
+            }
         }
 
     }

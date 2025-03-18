@@ -10,5 +10,6 @@ namespace EComm.Contracts
     {
         Task<FavouriteDto> AddToUsersFavourite(CreateFavouriteDto favouriteDto);
         Task<IEnumerable<ProductDto>> GetUsersFavourites(string userId);
+        Task RemoveFavourite(string userId, Guid productId);
     }
 }

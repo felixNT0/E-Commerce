@@ -16,11 +16,15 @@ namespace EComm.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<AppUser> _userManager;
+        private readonly ILogger<FavouriteService> _logger;
 
-        public FavouriteService(ApplicationDbContext dbContext, UserManager<AppUser> userManager)
+        public FavouriteService(ApplicationDbContext dbContext,
+                                UserManager<AppUser> userManager, 
+                                ILogger<FavouriteService> logger)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _logger = logger;
 
         }
 
@@ -65,11 +69,11 @@ namespace EComm.Services
 
         public async Task<IEnumerable<ProductDto>> GetUsersFavourites(string userId)
         {
-            
+
             var usersFavourites = await _dbContext.Favourites
                                         .Where(f => f.UserId == userId)
-                                        .Include(f=> f.Products)
-                                        .ThenInclude(p=> p.Category)
+                                        .Include(f => f.Products)
+                                        .ThenInclude(p => p.Category)
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync();
             if (usersFavourites is null || usersFavourites.Products is null)
@@ -87,6 +91,29 @@ namespace EComm.Services
                 Category = p.Category?.Name ?? ""
             });
             return favouriteProductsDto;
+        }
+
+
+        public async Task RemoveFavourite(string userId, Guid productId)
+        {
+            var favourites = await _dbContext.Favourites
+                                        .Where(f => f.UserId == userId)
+                                        .Include(f => f.Products)
+                                        .SingleOrDefaultAsync();
+            if (favourites is null)
+            {
+                _logger.LogError($"The User with id {userId} does not have any favourite product ");
+                throw new FavouriteNotFoundException($"You do not have any favourite product ");
+            }
+
+            var product = favourites.Products.Where(p => p.Id == productId).SingleOrDefault();
+            if (product is null)
+            {
+                _logger.LogError($"The product with id :{productId} is not in the users favourites List");
+                throw new ProductNotFoundException($"The product is not in your favourites List");
+            }
+            favourites.Products.Remove(product);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
