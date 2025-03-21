@@ -29,7 +29,7 @@ namespace EComm.Controllers
             try
             {
                 var createdProductDto = await _productService.CreateProductAsync(productDto);
-                return Ok(createdProductDto);
+                return CreatedAtAction(nameof(GetProduct) ,new {Id = createdProductDto.Id}, createdProductDto);
             }
             catch(CategoryNotFoundException e)
             {

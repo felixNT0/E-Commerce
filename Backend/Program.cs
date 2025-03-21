@@ -19,6 +19,8 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IFavouriteService, FavouriteService>();
+builder.Services.AddScoped<ICartItemService, CartItemService>();
+builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddHttpContextAccessor();
 
 

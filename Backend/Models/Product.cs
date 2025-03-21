@@ -25,6 +25,10 @@ namespace EComm.Models
 
         [MaxLength(450)]
         public string? Description { get; set; }
+
+        public int Quantity { get; set; }
+
+        public List<CartItem?> CartItems { get; set; }
     
         public Category? Category { get; set; }
 

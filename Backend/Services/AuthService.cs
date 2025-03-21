@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Backend.Models.Exceptions;
 using EComm.Contracts;
+using EComm.Data;
 using EComm.DTOs;
 using EComm.Models;
 using EComm.Models.Exceptions;
@@ -20,14 +21,18 @@ namespace EComm.Services
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IJwtTokenService _tokenService;
         private readonly ILogger _logger;
+        private readonly ApplicationDbContext _dbContext;
+
         public AuthService(UserManager<AppUser> userManager,
                             SignInManager<AppUser> signInManager,
-                            IJwtTokenService jwtTokenService, ILogger<AuthService> logger)
+                            IJwtTokenService jwtTokenService, ILogger<AuthService> logger,
+                            ApplicationDbContext dbContext)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _tokenService = jwtTokenService;
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         public async Task<UserDto?> RegisterUser(UserCreationDto userDto)
@@ -43,7 +48,10 @@ namespace EComm.Services
             var createdUser = await _userManager.CreateAsync(user, userDto.Password);
             if (createdUser.Succeeded)
             {
+                user.Cart = new Cart { UserId = user.Id };
                 await _userManager.AddToRoleAsync(user, userDto.Role);
+                await _dbContext.Carts.AddAsync(user.Cart);
+                await _dbContext.SaveChangesAsync();
                 return new UserDto
                 {
                     Id = user.Id,

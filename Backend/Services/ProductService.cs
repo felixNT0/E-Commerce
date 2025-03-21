@@ -30,77 +30,81 @@ namespace EComm.Services
         public async Task<CreatedProductDto> CreateProductAsync(CreateProductDto productDto)
         {
             var image = await _imageService.CreateImageAsync(productDto.Image);
-        
+
             // TODO: Get the Category Specified in the DTO then add it the Product on Creation 
-            var category = await _dbContext.Categories.SingleOrDefaultAsync(c=> c.Name == productDto.Category);
-            if(category is null)
+            var category = await _dbContext.Categories.SingleOrDefaultAsync(c => c.Name == productDto.Category);
+            if (category is null)
             {
                 _logger.LogError($" Category {productDto.Category} does not Exist");
                 throw new CategoryNotFoundException($" Category {productDto.Category} does not Exist");
             }
 
             var product = new Product
-                            {
-                                Name = productDto.Name,
-                                Price = productDto.Price,
-                                Image = image,
-                                Description = productDto.Description,
-                                Category = category,
-                                ImageUrl = image.Url
-                            };
+            {
+                Name = productDto.Name,
+                Price = productDto.Price,
+                Image = image,
+                Description = productDto.Description,
+                Category = category,
+                ImageUrl = image.Url
+            };
 
             await _dbContext.Products.AddAsync(product);
             await _dbContext.SaveChangesAsync();
-            
-            
-            return new CreatedProductDto { Id = product.Id,
-                                        ProductName= product.Name, 
-                                        ImageUrl = image.Url, 
-                                        Price = product.Price,
-                                        Category = category.Name
-                                        };
+
+
+            return new CreatedProductDto
+            {
+                Id = product.Id,
+                ProductName = product.Name,
+                ImageUrl = image.Url,
+                Price = product.Price,
+                Category = category.Name
+            };
         }
 
         public async Task<ProductDto> GetProductByIdAsync(Guid productId)
         {
             Expression<Func<Product, bool>> condition = (p) => p.Id == productId;
-            var product = await  _dbContext.Products.Include(p=>p.Category).AsNoTracking().SingleOrDefaultAsync(condition);
+            var product = await _dbContext.Products.Include(p => p.Category).AsNoTracking().SingleOrDefaultAsync(condition);
             if (product is null)
             {
                 _logger.LogError($"The product with id: {productId} does not Exist");
                 throw new NullReferenceException($"The product with id: {productId} does not Exist");
             }
-                
-            return new ProductDto { Id = product.Id, 
-                                    ImageUrl = product.ImageUrl ?? "testUrl",
-                                    ProductName = product.Name ,
-                                    Description = product.Description,
-                                    Price = product.Price,
-                                    Category = product.Category?.Name ?? "" 
-                                };
+
+            return new ProductDto
+            {
+                Id = product.Id,
+                ImageUrl = product.ImageUrl ?? "testUrl",
+                ProductName = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Category = product.Category?.Name ?? ""
+            };
         }
 
         public async Task<IEnumerable<ProductDto>> GetProductsByCategoryAsync(int categoryId)
         {
-            var products =  await _dbContext.Products.Where(p=> p.CategoryId == categoryId)
+            var products = await _dbContext.Products.Where(p => p.CategoryId == categoryId)
                                       .AsNoTracking()
-                                      .Include(p=> p.Category)
+                                      .Include(p => p.Category)
                                       .ToListAsync();
 
             if (products is null)
             {
                 return [];
             }
-            
+
             var productsList = products.Select(p => new ProductDto
-                                {
-                                    Id = p.Id,
-                                    ProductName = p.Name,
-                                    ImageUrl = p.ImageUrl ?? "testUrl",
-                                    Price = p.Price,
-                                    Description = p.Description,
-                                    Category = p.Category?.Name ?? ""                                    
-                                });
+            {
+                Id = p.Id,
+                ProductName = p.Name,
+                ImageUrl = p.ImageUrl ?? "testUrl",
+                Price = p.Price,
+                Description = p.Description,
+                Category = p.Category?.Name ?? ""
+            });
             return productsList;
 
         }
@@ -108,7 +112,7 @@ namespace EComm.Services
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
             var products = await _dbContext.Products
-                                            .Include(p=>p.Category)
+                                            .Include(p => p.Category)
                                             .AsNoTracking()
                                             .ToListAsync();
             if (products is null)
@@ -116,27 +120,27 @@ namespace EComm.Services
                 return [];
             }
             var productsList = products.Select(p => new ProductDto
-                                {
-                                    Id = p.Id,
-                                    ProductName = p.Name,
-                                    ImageUrl = p.ImageUrl ?? "testUrl",
-                                    Price = p.Price,
-                                    Description = p.Description,
-                                    Category = p.Category?.Name ?? ""
-                                });
+            {
+                Id = p.Id,
+                ProductName = p.Name,
+                ImageUrl = p.ImageUrl ?? "testUrl",
+                Price = p.Price,
+                Description = p.Description,
+                Category = p.Category?.Name ?? ""
+            });
             return productsList;
         }
 
         public async Task<ProductDto> UpdateProductAsync(Guid productId, UpdateProductDto productDto)
         {
-            var product = await _dbContext.Products.Include(p=>p.Image).Include(p=> p.Category).FirstOrDefaultAsync(p=> p.Id == productId);
+            var product = await _dbContext.Products.Include(p => p.Image).Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == productId);
             if (product is null)
             {
                 _logger.LogError($"Product with the id : {productId} does not Exist");
                 throw new ProductNotFoundException($"Product with the id : {productId} does not Exist");
             }
-            var category = await _dbContext.Categories.SingleOrDefaultAsync(c=> c.Name == productDto.Category);
-            if(category is null)
+            var category = await _dbContext.Categories.SingleOrDefaultAsync(c => c.Name == productDto.Category);
+            if (category is null)
             {
                 _logger.LogError($" Category {productDto.Category} does not Exist");
                 throw new CategoryNotFoundException($" Category {productDto.Category} does not Exist");
@@ -146,12 +150,12 @@ namespace EComm.Services
             product.Description = productDto.Description;
             product.Category = category;
 
-            if(productDto.Image != null)
+            if (productDto.Image != null)
             {
-                if(product.Image != null)
+                if (product.Image != null)
                 {
                     var oldImagePath = product.Image.FilePath;
-                    if(File.Exists(oldImagePath))
+                    if (File.Exists(oldImagePath))
                     {
                         File.Delete(oldImagePath);
                     }
@@ -168,25 +172,25 @@ namespace EComm.Services
                 var newImage = await _imageService.CreateImageAsync(productDto.Image);
                 product.Image = newImage;
                 product.ImageUrl = newImage.Url;
-                
+
             }
             await _dbContext.SaveChangesAsync();
-            return new ProductDto { Id = product.Id, ProductName = product.Name, Price = product.Price, Description = product.Description, ImageUrl = product.ImageUrl};
+            return new ProductDto { Id = product.Id, ProductName = product.Name, Price = product.Price, Description = product.Description, ImageUrl = product.ImageUrl };
         }
 
         public async Task DeleteProductAsync(Guid id)
         {
             Expression<Func<Product, bool>> condition = (p) => p.Id == id;
-            var product = await _dbContext.Products.Include(p=>p.Image).Include(p=>p.Category).SingleOrDefaultAsync(condition);
+            var product = await _dbContext.Products.Include(p => p.Image).Include(p => p.Category).SingleOrDefaultAsync(condition);
             if (product is null)
             {
                 _logger.LogError($"The product with id: {id} does not Exist");
                 throw new ProductNotFoundException($"The product with id: {id} does not Exist");
             }
-            if(product.Image != null)
+            if (product.Image != null)
             {
                 var imagePath = product.Image.FilePath;
-                if(File.Exists(imagePath))
+                if (File.Exists(imagePath))
                 {
                     File.Delete(imagePath);
                 }

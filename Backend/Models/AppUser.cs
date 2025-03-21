@@ -9,4 +9,6 @@ public class AppUser : IdentityUser
     public string LastName { get; set; }
 
     public Favourite? Favourites { get; set; }
+
+    public Cart? Cart { get; set; } 
 }
