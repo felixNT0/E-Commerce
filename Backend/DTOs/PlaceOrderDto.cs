@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace EComm.DTOs
 {
-    public record AddToCartDto
+    public record PlaceOrderDto
     {
-        public Guid ProductId { get; set; }
+        public string CheckoutUrl { get; set; }
     }
 }

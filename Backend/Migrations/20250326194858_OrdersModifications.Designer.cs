@@ -4,6 +4,7 @@ using EComm.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EComm.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250326194858_OrdersModifications")]
+    partial class OrdersModifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,9 +224,6 @@ namespace EComm.Migrations
                     b.Property<string>("AppUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("ShippingAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -248,9 +248,6 @@ namespace EComm.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CartItemId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
@@ -265,10 +262,6 @@ namespace EComm.Migrations
                         .HasColumnType("decimal(10, 2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CartItemId")
-                        .IsUnique()
-                        .HasFilter("[CartItemId] IS NOT NULL");
 
                     b.HasIndex("OrderId");
 
@@ -542,10 +535,6 @@ namespace EComm.Migrations
 
             modelBuilder.Entity("EComm.Models.OrderItem", b =>
                 {
-                    b.HasOne("EComm.Models.CartItem", null)
-                        .WithOne("OrderItem")
-                        .HasForeignKey("EComm.Models.OrderItem", "CartItemId");
-
                     b.HasOne("EComm.Models.Order", null)
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
@@ -645,11 +634,6 @@ namespace EComm.Migrations
             modelBuilder.Entity("EComm.Models.Cart", b =>
                 {
                     b.Navigation("CartItems");
-                });
-
-            modelBuilder.Entity("EComm.Models.CartItem", b =>
-                {
-                    b.Navigation("OrderItem");
                 });
 
             modelBuilder.Entity("EComm.Models.Category", b =>

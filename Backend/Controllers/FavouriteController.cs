@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using EComm.Contracts;
 using EComm.DTOs;
+using EComm.Extensions;
 using EComm.Models.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -24,12 +26,14 @@ namespace EComm.Controllers
             _favouriteService = favouriteService;
         }
 
-        [HttpPost("addToFavourites")]
+        [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddToFavourites(CreateFavouriteDto favouriteDto)
         {
             try
             {
-                var favouritesDto = await _favouriteService.AddToUsersFavourite(favouriteDto);
+                var userId = User.GetUserId();
+                var favouritesDto = await _favouriteService.AddToUsersFavourite(userId, favouriteDto);
                 return Ok(favouritesDto);
             }
             catch (Exception e)
@@ -40,13 +44,15 @@ namespace EComm.Controllers
 
         }
 
-        [HttpGet("getFavourites")]
-        public async Task<IActionResult> GetUsersFavouriteProducts(string userId)
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetUsersFavouriteProducts()
         {
             try
             {
                 // TODO: We are going to get the userId from the logiin token and then use it
                 // rather than from the dto contract
+                var userId = User.GetUserId();
                 var favouritesDto = await _favouriteService.GetUsersFavourites(userId);
                 return Ok(favouritesDto);
             }
@@ -59,13 +65,15 @@ namespace EComm.Controllers
         }
 
         [HttpDelete("{productId:Guid}")]
-        public async Task<IActionResult> RemoveProductFromUsersFavourites(RemoveFavouriteDto favouriteDto, Guid productId)
+        [Authorize]
+        public async Task<IActionResult> RemoveProductFromUsersFavourites(Guid productId)
         {
             try
             {
                 // TODO: We are going to get the userId from the logiin token and then use it
                 // rather than from the dto contract
-                await _favouriteService.RemoveFavourite(favouriteDto.UserId, productId);
+                var userId = User.GetUserId();
+                await _favouriteService.RemoveFavourite(userId, productId);
                 return NoContent();
             }
             catch (FavouriteNotFoundException e)

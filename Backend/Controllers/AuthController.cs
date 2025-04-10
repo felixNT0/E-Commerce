@@ -70,8 +70,8 @@ namespace EComm.Controllers
             }
 
         }
-        [HttpGet("getUsers")]
 
+        [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
             var usersDto = await _authService.GetUsers();

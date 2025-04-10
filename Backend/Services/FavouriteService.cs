@@ -28,7 +28,7 @@ namespace EComm.Services
 
         }
 
-        public async Task<FavouriteDto> AddToUsersFavourite(CreateFavouriteDto favouriteDto)
+        public async Task<FavouriteDto> AddToUsersFavourite(string userId, CreateFavouriteDto favouriteDto)
         {
             var product = await _dbContext.Products
                                         .Include(p => p.Category)
@@ -37,10 +37,10 @@ namespace EComm.Services
             {
                 throw new ProductNotFoundException($"The Product with the Id {favouriteDto.ProductId} Does not Exist");
             }
-            var user = await _userManager.FindByIdAsync(favouriteDto.UserId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user is null)
             {
-                throw new UserNotFoundException($"User with Id : {favouriteDto.UserId} Does Not Exist");
+                throw new UserNotFoundException($"User with Id : {userId} Does Not Exist");
             }
             if (user.Favourites is null)
             {

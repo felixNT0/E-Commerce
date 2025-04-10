@@ -8,7 +8,6 @@ namespace EComm.DTOs
 {
     public record AddToCartCollectionDto
     {
-        public string UserId { get; set; }
 
         public List<CreateCartItemDto> CartItemDtos { get; set; }
     }

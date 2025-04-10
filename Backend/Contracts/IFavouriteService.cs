@@ -8,7 +8,7 @@ namespace EComm.Contracts
 {
     public interface IFavouriteService
     {
-        Task<FavouriteDto> AddToUsersFavourite(CreateFavouriteDto favouriteDto);
+        Task<FavouriteDto> AddToUsersFavourite(string userId, CreateFavouriteDto favouriteDto);
         Task<IEnumerable<ProductDto>> GetUsersFavourites(string userId);
         Task RemoveFavourite(string userId, Guid productId);
     }

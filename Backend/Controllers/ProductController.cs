@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EComm.Contracts;
 using EComm.DTOs;
 using EComm.Models.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -21,7 +22,8 @@ namespace EComm.Controllers
             _productService = productService;
         }
 
-        [HttpPost("createProduct")]
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProduct(CreateProductDto productDto)
         {
             if(!ModelState.IsValid)
@@ -75,6 +77,7 @@ namespace EComm.Controllers
 
 
         [HttpPut("{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct(Guid id, UpdateProductDto productDto)
         {
             if(!ModelState.IsValid)
@@ -103,6 +106,7 @@ namespace EComm.Controllers
         }
 
         [HttpDelete("{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
             try

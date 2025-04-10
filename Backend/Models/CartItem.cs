@@ -16,6 +16,8 @@ namespace EComm.Models
 
         public Product Product { get; set; }
 
+        public OrderItem? OrderItem { get; set; }
+
         public int Quantity { get; set; } =  1;
 
     }

@@ -10,6 +10,8 @@ using EComm.DTOs;
 using EComm.Models.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using EComm.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace EComm.Controllers
@@ -20,29 +22,34 @@ namespace EComm.Controllers
     {
         private readonly ILogger<CartController> _logger;
         private readonly ICartService _cartService;
-
+        
         public CartController(ILogger<CartController> logger, ICartService cartService)
         {
             _logger = logger;
             _cartService = cartService;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddToCart(AddToCartDto cartDto)
         {
+            if(!ModelState.IsValid)
+            {
+                return Unauthorized();
+            }
+
             try
             {
-                await _cartService.AddCartItemAsync(cartDto.ProductId, cartDto.UserId);
+                var userId = User.GetUserId();
+                await _cartService.AddCartItemAsync(cartDto.ProductId, userId);
                 return Created("", new { message = "Item added to cart successfully" });
             }
             catch (ProductNotFoundException e)
             {
-
                 return NotFound(e.Message);
             }
             catch (CartNotFoundException e)
             {
-
                 return NotFound(e.Message);
             }
             catch (Exception e)
@@ -54,11 +61,13 @@ namespace EComm.Controllers
 
         }
 
+        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetCart(string userId)
+        public async Task<IActionResult> GetCart()
         {
             try
             {
+                var userId = User.GetUserId();
                 var cart = await _cartService.GetCartAsync(userId);
                 var response = new { Count = cart.CartItems.Count, Cart = cart };
                 return Ok(response);
@@ -71,6 +80,8 @@ namespace EComm.Controllers
             }
         }
 
+
+        [Authorize]
         [HttpPost("collection")]
         public async Task<IActionResult> AddToCartCollection(AddToCartCollectionDto addToCartCollectionDto)
         {
@@ -82,7 +93,8 @@ namespace EComm.Controllers
 
             try
             {
-                var cartCollection = await _cartService.AddToCartCollectionAsync(addToCartCollectionDto.UserId, addToCartCollectionDto);
+                var userId = User.GetUserId();
+                var cartCollection = await _cartService.AddToCartCollectionAsync(userId, addToCartCollectionDto);
                 return Created("", new { cartItems = cartCollection.cartItems });
 
             }
@@ -98,11 +110,13 @@ namespace EComm.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("{cartItemId:Guid}")]
-        public async Task<IActionResult> RemoveCartItem(string userId, Guid cartItemId)
+        public async Task<IActionResult> RemoveCartItem(Guid cartItemId)
         {
             try
             {
+                var userId = User.GetUserId();
                 await _cartService.RemoveCartItem(userId, cartItemId);
                 return NoContent();
             }
@@ -123,6 +137,7 @@ namespace EComm.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("{cartItemId:Guid}")]
         public async Task<IActionResult> UpdateCartItem(Guid cartItemId, [FromBody] UpdateCartItemDto cartItemDto)
         {
@@ -148,11 +163,13 @@ namespace EComm.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("clear")]
-        public async Task<IActionResult> ClearCart(string userId)
+        public async Task<IActionResult> ClearCart()
         {
             try
             {
+                var userId = User.GetUserId();
                 await _cartService.ClearCartAsync(userId);
                 return NoContent();
             }

@@ -35,7 +35,7 @@ namespace EComm.Services
                 throw new ProductNotFoundException("Product not Found");
             }
 
-            var cartItem = new CartItem { Product = product };
+            var cartItem = new CartItem { Product = product};
             // get the users cart
             var cart = await _dbContext.Carts.Where(c => c.UserId == userId).SingleOrDefaultAsync();
 
