@@ -4,6 +4,7 @@ using EComm.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EComm.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250412133405_UserNotificationsNullable")]
+    partial class UserNotificationsNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,7 +319,7 @@ namespace EComm.Migrations
                     b.Property<decimal>("AmountToPay")
                         .HasColumnType("decimal(12, 2)");
 
-                    b.Property<Guid?>("OrderId")
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PaymentMethod")
@@ -332,8 +335,7 @@ namespace EComm.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId")
-                        .IsUnique()
-                        .HasFilter("[OrderId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Payments");
                 });
@@ -592,11 +594,11 @@ namespace EComm.Migrations
 
             modelBuilder.Entity("EComm.Models.Payment", b =>
                 {
-                    b.HasOne("EComm.Models.Order", "Order")
+                    b.HasOne("EComm.Models.Order", null)
                         .WithOne("Payment")
-                        .HasForeignKey("EComm.Models.Payment", "OrderId");
-
-                    b.Navigation("Order");
+                        .HasForeignKey("EComm.Models.Payment", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EComm.Models.Product", b =>
@@ -700,7 +702,8 @@ namespace EComm.Migrations
                 {
                     b.Navigation("OrderItems");
 
-                    b.Navigation("Payment");
+                    b.Navigation("Payment")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EComm.Models.Product", b =>

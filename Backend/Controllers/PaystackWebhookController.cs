@@ -60,8 +60,16 @@ namespace EComm.Controllers
 
                 _queue.Enqueue(async serviceProvider =>
                 {
-                    var webhookService = serviceProvider.GetRequiredService<IPaystackWebhookHandlerService>();
-                    await webhookService.HandleEvent(eventPayload);
+                    try
+                    {
+                        var webhookService = serviceProvider.GetRequiredService<IPaystackWebhookHandlerService>();
+                        await webhookService.HandleEvent(eventPayload);
+                    }
+                    catch(Exception e)
+                    {
+                        _logger.LogError(e.StackTrace, $"An Error Occured while Trying to Execute the background Task {e.Message}");
+                    }
+
                 });
                 return Ok();
             }

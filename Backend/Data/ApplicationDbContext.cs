@@ -28,4 +28,6 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     public DbSet<OrderItem> OrderItems { get; set; }
 
     public DbSet<Payment> Payments { get; set; }
+
+    public DbSet<Notification> Notifications { get; set; }
 }

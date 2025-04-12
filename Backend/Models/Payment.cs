@@ -11,7 +11,7 @@ namespace EComm.Models
     {
         public Guid Id { get; set; }
 
-        public Guid OrderId { get; set; }
+        public Guid? OrderId { get; set; }
 
         [Column(TypeName = "decimal(12, 2)")]
         public decimal AmountToPay { get; set; }
@@ -24,6 +24,8 @@ namespace EComm.Models
         public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
 
         public string PaymentMethod { get; set; } = string.Empty;
+
+        public Order? Order { get; set; }
 
     }
 }

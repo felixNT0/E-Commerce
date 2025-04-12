@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using Backend.Models.Exceptions;
 using EComm.Contracts;
 using EComm.Data;
+using EComm.Models;
 using EComm.Models.Exceptions;
 using EComm.Shared.Enums;
 using EComm.Shared.Models;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -21,22 +23,28 @@ namespace EComm.Services
         private readonly string? _secret;
         private readonly ILogger<PaystackWebhookHandlerService> _logger;
         private readonly ApplicationDbContext _dbContext;
+        private readonly IHubContext<NotificationHub, INotificationClient> _hubContext;
+        private readonly INotificationService _notificationService;
 
         public PaystackWebhookHandlerService(IConfiguration config,
                                             ILogger<PaystackWebhookHandlerService> logger,
-                                            ApplicationDbContext dbContext
+                                            ApplicationDbContext dbContext,
+                                            IHubContext<NotificationHub, INotificationClient> hubContext,
+                                            INotificationService notificationService
                                             )
         {
             _secret = config["PaystackSettings:SecretKey"];
             _logger = logger;
             _dbContext = dbContext;
+            _hubContext = hubContext;
+            _notificationService = notificationService;
         }
 
 
         public async Task HandleEvent(PaystackWebhookEvent eventPayload)
         {
             var reference = Guid.Parse(eventPayload.Data.Reference);
-            var payment = await _dbContext.Payments.Where(p => p.TransactionId.Equals(reference)).SingleOrDefaultAsync();
+            var payment = await _dbContext.Payments.Where(p => p.TransactionId.Equals(reference)).Include(p => p.Order).ThenInclude(o=> o.OrderItems).SingleOrDefaultAsync();
 
             if (payment is null)
             {
@@ -58,9 +66,11 @@ namespace EComm.Services
 
                 payment.AmountPaid = eventPayload.Data.Amount;
                 payment.PaymentMethod = eventPayload.Data.Channel;
-                await ClearOrderItemsFromCart(payment.Id);
+                await ClearOrderItemsFromCart(payment.Order);
                 await _dbContext.SaveChangesAsync();
-
+                await _notificationService.NotifyUserAsync(payment.Order.UserId,
+                                                           $"Payment of {payment.AmountPaid / 100 } for your order was successfull",
+                                                           "Successful");
             }
 
         }
@@ -85,15 +95,9 @@ namespace EComm.Services
             }
         }
 
-        private async Task ClearOrderItemsFromCart(Guid paymentId)
+        private async Task ClearOrderItemsFromCart(Order order)
         {
-            
-            var order = await _dbContext.Orders.Include(o => o.Payment).Include(o=> o.OrderItems).Where(o => o.Payment.Id.Equals(paymentId)).SingleOrDefaultAsync();
-            if (order is null)
-            {
-                _logger.LogError($"The order for the payment with payment id : {paymentId} was not Found");
-                throw new OrderNotFoundException($"the Order for the payment does not exist");
-            }
+
             // loop through the order orderItems and then clear the cartItems and decrease the product quantity
             foreach (var item in order.OrderItems)
             {
@@ -113,5 +117,12 @@ namespace EComm.Services
 
             }
         }
+
+        // private async Task NotifyUser(Payment payment)
+        // {
+        //     var order = await _dbContext.Orders.Where(o=> o.Id.Equals(payment.OrderId)).AsNoTracking().SingleOrDefaultAsync();
+        //     await  _hubContext.Clients.User(order.UserId).PaymentNotification($"Payment of {payment.AmountPaid} for your order was successfull");
+
+        // }
     }
 }
