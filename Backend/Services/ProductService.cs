@@ -9,6 +9,7 @@ using EComm.Data;
 using EComm.DTOs;
 using EComm.Models;
 using EComm.Models.Exceptions;
+using EComm.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EComm.Services
@@ -84,51 +85,92 @@ namespace EComm.Services
             };
         }
 
-        public async Task<IEnumerable<ProductDto>> GetProductsByCategoryAsync(int categoryId)
+        public async Task<PagedResultsDto<ProductDto>> GetProductsByCategoryAsync(int categoryId, int page, int pageSize)
         {
-            var products = await _dbContext.Products.Where(p => p.CategoryId == categoryId)
-                                      .AsNoTracking()
-                                      .Include(p => p.Category)
-                                      .ToListAsync();
+            var productCount = await _dbContext.Products.Where(p => p.CategoryId.Equals(categoryId)).CountAsync();
+            var pages = (int)Math.Ceiling(productCount / (double)pageSize);
+            var skipCondition = (page - 1) * pageSize;
+
+            var products = await _dbContext.Products
+                                            .Where(p => p.CategoryId.Equals(categoryId))
+                                            .Skip(skipCondition)
+                                            .Take(pageSize)
+                                            .Include(p=> p.Category)
+                                            .AsNoTracking()
+                                            .ToListAsync();
 
             if (products is null)
             {
-                return [];
+                return new PagedResultsDto<ProductDto>
+                {
+                    TotalCount = productCount,
+                    PageSize = pageSize,
+                    PageNumber = page,
+                    Items = []
+                };
             }
 
             var productsList = products.Select(p => new ProductDto
             {
                 Id = p.Id,
                 ProductName = p.Name,
-                ImageUrl = p.ImageUrl ?? "testUrl",
+                ImageUrl = p.ImageUrl,
                 Price = p.Price,
                 Description = p.Description,
                 Category = p.Category?.Name ?? ""
             });
-            return productsList;
+
+            return new PagedResultsDto<ProductDto>
+            {
+                TotalCount = productCount,
+                PageSize = pageSize,
+                PageNumber = page,
+                Items = productsList,
+                Pages = pages
+            };
 
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+        public async Task<PagedResultsDto<ProductDto>> GetAllProductsAsync(int page, int pageSize)
         {
+            var productCount = await _dbContext.Products.CountAsync();
+            var pages = (int)Math.Ceiling(productCount / (double)pageSize);
+            var skipCondition = (page - 1) * pageSize;
             var products = await _dbContext.Products
-                                            .Include(p => p.Category)
-                                            .AsNoTracking()
-                                            .ToListAsync();
+                                           .Skip(skipCondition)
+                                           .Take(pageSize)
+                                           .Include(p=> p.Category)
+                                           .AsNoTracking()
+                                           .ToListAsync();
+        
             if (products is null)
             {
-                return [];
+                return new PagedResultsDto<ProductDto>
+                {
+                    TotalCount = productCount,
+                    PageSize = pageSize,
+                    PageNumber = page,
+                    Items = []
+                };
             }
             var productsList = products.Select(p => new ProductDto
             {
                 Id = p.Id,
                 ProductName = p.Name,
-                ImageUrl = p.ImageUrl ?? "testUrl",
+                ImageUrl = p.ImageUrl,
                 Price = p.Price,
                 Description = p.Description,
-                Category = p.Category?.Name ?? ""
+                Category = p.Category?.Name
             });
-            return productsList;
+            // return productsList;
+            return new PagedResultsDto<ProductDto>
+            {
+                TotalCount = productCount,
+                PageSize = pageSize,
+                PageNumber = page,
+                Items = productsList,
+                Pages = pages
+            };
         }
 
         public async Task<ProductDto> UpdateProductAsync(Guid productId, UpdateProductDto productDto)

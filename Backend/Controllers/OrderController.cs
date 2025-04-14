@@ -60,11 +60,10 @@ namespace EComm.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetOrders()
+        public async Task<IActionResult> GetOrders(int page = 1, int pageSize = 10)
         {
             var userId = User.GetUserId();
-            var orders = await _orderService.GetOrders(userId);
-            var response = new { Count = orders.Count(), Orders = orders };
+            var response = await _orderService.GetOrders(userId, page, pageSize);
             return Ok(response);
         }
 

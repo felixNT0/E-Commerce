@@ -16,24 +16,28 @@ namespace EComm.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
+        private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(IProductService productService, ICategoryService categoryService)
+        public CategoryController(IProductService productService, 
+                                  ICategoryService categoryService,
+                                  ILogger<CategoryController> logger)
         {
             _productService = productService;
             _categoryService = categoryService;
+            _logger = logger;
         }
 
         [HttpGet("{id:int}/products")]
-        public async Task<IActionResult> GetCategoryProducts(int id)
+        public async Task<IActionResult> GetCategoryProducts(int id, int page = 1, int pageSize = 10)
         {
             try
             {
-                var productsDto = await  _productService.GetProductsByCategoryAsync(id); 
+                var productsDto = await  _productService.GetProductsByCategoryAsync(id, page, pageSize); 
                 return Ok(productsDto);   
             }
             catch (Exception e)
             {
-                
+                _logger.LogError($"An Error occured while trying to get the products for category {id} : {e.Message}");
                 return StatusCode(500, $"An Error occured while trying to get the products for category {id} : {e.Message}");
             }
             
@@ -50,6 +54,7 @@ namespace EComm.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError($"An Error Occured while trying to get the Categories : {e.Message} ");
                 return StatusCode(500, $"An Error Occured while trying to get the Categories : {e.Message} ");
             }
         }

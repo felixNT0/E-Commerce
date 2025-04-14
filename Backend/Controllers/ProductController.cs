@@ -26,23 +26,23 @@ namespace EComm.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProduct(CreateProductDto productDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest();
             try
             {
                 var createdProductDto = await _productService.CreateProductAsync(productDto);
-                return CreatedAtAction(nameof(GetProduct) ,new {Id = createdProductDto.Id}, createdProductDto);
+                return CreatedAtAction(nameof(GetProduct), new { Id = createdProductDto.Id }, createdProductDto);
             }
-            catch(CategoryNotFoundException e)
+            catch (CategoryNotFoundException e)
             {
                 return NotFound(e.Message);
             }
             catch (ImageProcessingException e)
             {
-                
+
                 return BadRequest(e.Message);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return StatusCode(500, $"An error occured while creating the Product {e.Message}");
             }
@@ -56,7 +56,7 @@ namespace EComm.Controllers
                 var productDto = await _productService.GetProductByIdAsync(id);
                 return Ok(productDto);
             }
-            catch(NullReferenceException e)
+            catch (NullReferenceException e)
             {
                 return StatusCode(404, e.Message);
             }
@@ -64,15 +64,18 @@ namespace EComm.Controllers
             {
                 return StatusCode(500, $"An Error Occured while trying to get the product: {e.Message}");
             }
-            
+
 
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetProducts(int page = 1, int pageSize = 10)
         {
-            var productsDto = await _productService.GetAllProductsAsync();
-            return Ok(productsDto);
+            if (page <= 0 || pageSize <= 0)
+                return BadRequest("Page and pageSize must be greater than 0.");
+
+            var result = await _productService.GetAllProductsAsync(page, pageSize);
+            return Ok(result);
         }
 
 
@@ -80,7 +83,7 @@ namespace EComm.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct(Guid id, UpdateProductDto productDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
@@ -89,17 +92,17 @@ namespace EComm.Controllers
                 var updatedProduct = await _productService.UpdateProductAsync(id, productDto);
                 return NoContent();
             }
-            catch(ProductNotFoundException e)
+            catch (ProductNotFoundException e)
             {
                 return NotFound(e.Message);
             }
-            catch(ProductUpdateException e)
+            catch (ProductUpdateException e)
             {
                 return StatusCode(500, $"An Error occured while trying to update the product : {e.Message}");
             }
             catch (Exception e)
             {
-                
+
                 return StatusCode(500, $"An Error occured while trying to update the product : {e.Message}");
             }
 
@@ -126,7 +129,7 @@ namespace EComm.Controllers
             {
                 return StatusCode(500, $"An Error Ocurred while trying to Delete the product : {e.Message}");
             }
-            
+
         }
     }
 }

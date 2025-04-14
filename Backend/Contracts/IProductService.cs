@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EComm.DTOs;
+using EComm.Shared.Models;
 
 namespace EComm.Contracts
 {
@@ -10,9 +11,9 @@ namespace EComm.Contracts
     {
         Task<CreatedProductDto> CreateProductAsync(CreateProductDto productDto);  
         Task<ProductDto> GetProductByIdAsync(Guid productId); 
-        Task<IEnumerable<ProductDto>> GetAllProductsAsync();
+        Task<PagedResultsDto<ProductDto>> GetAllProductsAsync(int page, int pageSize);
         Task<ProductDto> UpdateProductAsync(Guid productId, UpdateProductDto productDto);
-        Task<IEnumerable<ProductDto>> GetProductsByCategoryAsync(int categoryId);
+        Task<PagedResultsDto<ProductDto>> GetProductsByCategoryAsync(int categoryId, int page, int pageSize);
 
         Task DeleteProductAsync(Guid id);
     }

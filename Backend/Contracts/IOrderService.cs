@@ -10,6 +10,6 @@ namespace EComm.Contracts
     public interface IOrderService
     {
         Task<PlaceOrderDto> PlaceOrder(string userId, CreateOrderDto orderDto);
-        Task<IEnumerable<OrderDto>> GetOrders(string userId);
+        Task<PagedResultsDto<OrderDto>> GetOrders(string userId, int page, int pageSize);
     }
 }

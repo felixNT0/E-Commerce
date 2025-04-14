@@ -90,10 +90,22 @@ namespace EComm.Services
         }
 
 
-        public async Task<IEnumerable<OrderDto>> GetOrders(string userId)
+        public async Task<PagedResultsDto<OrderDto>> GetOrders(string userId, int page , int pageSize)
         {
 
-            var orders = await _dbContext.Orders.Include(o=>o.OrderItems).Include(o=>o.Payment).AsNoTracking().ToListAsync();
+            var ordersCount = await _dbContext.Orders.Where(o=> o.UserId.Equals(userId)).CountAsync();
+            var pages = (int)Math.Ceiling(ordersCount / (double)pageSize);
+            var skipCondition = (page - 1) * pageSize;
+
+            var orders = await _dbContext.Orders
+                                .Where(o=> o.UserId.Equals(userId))
+                                .Skip(skipCondition)
+                                .Take(pageSize)
+                                .Include(o=>o.OrderItems)
+                                .Include(o=>o.Payment)
+                                .AsNoTracking()
+                                .ToListAsync();
+
             var ordersDto = new List<OrderDto>();
             foreach(var order in orders)
             {
@@ -112,7 +124,14 @@ namespace EComm.Services
                 ordersDto.Add(orderDto);
             }
 
-            return ordersDto;
+            return new PagedResultsDto<OrderDto>
+            {
+                TotalCount = ordersCount,
+                PageSize = pageSize,
+                PageNumber = page,
+                Items = ordersDto,
+                Pages = pages 
+            };
             
         }
         
