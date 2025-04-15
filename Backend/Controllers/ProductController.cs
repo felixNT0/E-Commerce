@@ -18,12 +18,15 @@ namespace EComm.Controllers
     {
         private readonly IProductService _productService;
         private readonly IOutputCacheStore _cache;
+        private readonly ILogger<ProductController> _logger;
 
         public ProductController(IProductService productService,
+                                 ILogger<ProductController> logger,
                                  IOutputCacheStore cache)
         {
             _productService = productService;
             _cache = cache;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -116,6 +119,25 @@ namespace EComm.Controllers
                 return StatusCode(500, $"An Error occured while trying to update the product : {e.Message}");
             }
 
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> ProductSearch([FromQuery]ProductSearchDto searchDto)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                var response = await _productService.SearchProducts(searchDto);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"An Error Occured while trying to get Products with searhParameter {searchDto.Query} and MinPrice {searchDto.MinPrice} and MaxPrice {searchDto.MaxPrice} with error : {e.Message}");
+                return StatusCode(500, "An Error Occured while trying to get Products");
+            }
         }
 
         [HttpDelete("{id:Guid}")]

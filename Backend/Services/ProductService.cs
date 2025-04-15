@@ -95,7 +95,7 @@ namespace EComm.Services
                                             .Where(p => p.CategoryId.Equals(categoryId))
                                             .Skip(skipCondition)
                                             .Take(pageSize)
-                                            .Include(p=> p.Category)
+                                            .Include(p => p.Category)
                                             .AsNoTracking()
                                             .ToListAsync();
 
@@ -139,10 +139,10 @@ namespace EComm.Services
             var products = await _dbContext.Products
                                            .Skip(skipCondition)
                                            .Take(pageSize)
-                                           .Include(p=> p.Category)
+                                           .Include(p => p.Category)
                                            .AsNoTracking()
                                            .ToListAsync();
-        
+
             if (products is null)
             {
                 return new PagedResultsDto<ProductDto>
@@ -218,6 +218,62 @@ namespace EComm.Services
             }
             await _dbContext.SaveChangesAsync();
             return new ProductDto { Id = product.Id, ProductName = product.Name, Price = product.Price, Description = product.Description, ImageUrl = product.ImageUrl };
+        }
+
+        public async Task<PagedResultsDto<ProductDto>> SearchProducts(ProductSearchDto searchDto)
+        {
+
+            var query = _dbContext.Products.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchDto.Query))
+            {
+                var lowered = searchDto.Query.ToLower();
+                query = query.Where(p =>
+                    p.Name.ToLower().Contains(lowered) ||
+                    p.Description.ToLower().Contains(lowered));
+            }
+
+            if (searchDto.MinPrice.HasValue)
+                query = query.Where(p => p.Price >= searchDto.MinPrice.Value)
+                            .OrderBy(p=>p.Price);
+
+            if (searchDto.MaxPrice.HasValue)
+                query = query.Where(p => p.Price <= searchDto.MaxPrice.Value);
+
+            var skipCondition = (searchDto.Page - 1) * searchDto.PageSize;
+            var count = await query.CountAsync();
+            query = query.Skip(skipCondition).Take(searchDto.PageSize);
+            var products = await query.ToListAsync();
+            if (products is null)
+            {
+                return new PagedResultsDto<ProductDto>
+                {
+                    TotalCount = 0,
+                    PageSize = searchDto.PageSize,
+                    PageNumber = searchDto.Page,
+                    Items = []
+                };
+            }
+            var pages = (int)Math.Ceiling(count / (double)searchDto.PageSize);
+
+            var productsList = products.Select(p => new ProductDto
+            {
+                Id = p.Id,
+                ProductName = p.Name,
+                ImageUrl = p.ImageUrl,
+                Price = p.Price,
+                Description = p.Description,
+                Category = p.Category?.Name
+            });
+
+            return new PagedResultsDto<ProductDto>
+            {
+                PageNumber = searchDto.Page,
+                PageSize = searchDto.PageSize,
+                Items = productsList,
+                TotalCount = count,
+                Pages = pages
+            };
         }
 
         public async Task DeleteProductAsync(Guid id)

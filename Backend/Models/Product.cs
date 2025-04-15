@@ -15,8 +15,8 @@ namespace EComm.Models
 
         [MaxLength(100)]
         public string Name { get; set; }
+        
         [Column(TypeName="decimal(10,2)")]
-
         public decimal Price { get; set; }
 
         public Image? Image { get; set; }
