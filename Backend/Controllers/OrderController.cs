@@ -9,6 +9,7 @@ using EComm.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace EComm.Controllers
 {
     [ApiController]
@@ -18,7 +19,8 @@ namespace EComm.Controllers
         private readonly IOrderService _orderService;
         private readonly ILogger<OrderController> _logger;
 
-        public OrderController(IOrderService orderService, ILogger<OrderController> logger)
+        public OrderController(IOrderService orderService,
+                               ILogger<OrderController> logger)
         {
             _orderService = orderService;
             _logger = logger;

@@ -8,6 +8,7 @@ using EComm.Models.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace EComm.Controllers
 {
@@ -16,10 +17,13 @@ namespace EComm.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IOutputCacheStore _cache;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService,
+                                 IOutputCacheStore cache)
         {
             _productService = productService;
+            _cache = cache;
         }
 
         [HttpPost]
@@ -31,6 +35,8 @@ namespace EComm.Controllers
             try
             {
                 var createdProductDto = await _productService.CreateProductAsync(productDto);
+                await _cache.EvictByTagAsync("productsList", CancellationToken.None);
+                await _cache.EvictByTagAsync("productsByCategoryList", CancellationToken.None);
                 return CreatedAtAction(nameof(GetProduct), new { Id = createdProductDto.Id }, createdProductDto);
             }
             catch (CategoryNotFoundException e)
@@ -68,7 +74,9 @@ namespace EComm.Controllers
 
         }
 
+        
         [HttpGet]
+        [OutputCache(Duration = 60, Tags = new[] { "productsList" })]
         public async Task<IActionResult> GetProducts(int page = 1, int pageSize = 10)
         {
             if (page <= 0 || pageSize <= 0)
@@ -90,6 +98,8 @@ namespace EComm.Controllers
             try
             {
                 var updatedProduct = await _productService.UpdateProductAsync(id, productDto);
+                await _cache.EvictByTagAsync("productsList", CancellationToken.None);
+                await _cache.EvictByTagAsync("productsByCategoryList", CancellationToken.None);
                 return NoContent();
             }
             catch (ProductNotFoundException e)
@@ -115,6 +125,8 @@ namespace EComm.Controllers
             try
             {
                 await _productService.DeleteProductAsync(id);
+                await _cache.EvictByTagAsync("productsList", CancellationToken.None);
+                await _cache.EvictByTagAsync("productsByCategoryList", CancellationToken.None);
                 return NoContent();
             }
             catch (ProductNotFoundException e)
@@ -123,7 +135,7 @@ namespace EComm.Controllers
             }
             catch (ProductDeletionException e)
             {
-                return StatusCode(500, $"An Error Ocurred while trying to Delete the product");
+                return StatusCode(500, $"An Error Ocurred while trying to Delete the product : {e.Message}");
             }
             catch (Exception e)
             {

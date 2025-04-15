@@ -7,6 +7,7 @@ using EComm.Extensions;
 using EComm.Models.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace EComm.Controllers
 {
@@ -28,6 +29,7 @@ namespace EComm.Controllers
         }
 
         [HttpGet("{id:int}/products")]
+        [OutputCache(Duration = 60, Tags = new[] {"productsByCategoryList"})]
         public async Task<IActionResult> GetCategoryProducts(int id, int page = 1, int pageSize = 10)
         {
             try

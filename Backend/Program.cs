@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.OutputCaching;
 using Polly;
 
 
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPaystackWebhookHandlerService, PaystackWebhookHandlerService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddOutputCache();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHostedService<QueuedHostedService>();
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
@@ -143,6 +145,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseOutputCache();
 
 app.MapHub<NotificationHub>("/notificationhub");
 
