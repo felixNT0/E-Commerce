@@ -21,9 +21,14 @@ WORKDIR /app
 COPY --from=build /app/out ./
 
 # Expose port
-EXPOSE 5280 
-EXPOSE 443
-ENV ASPNETCORE_URLS=https://+:443;http://+:5280
+# EXPOSE 5280 
+# EXPOSE 5443
+# ENV ASPNETCORE_URLS=https://+:5443;http://+:5280
+
+# ports for Render hosting
+EXPOSE 10000
+ENV ASPNETCORE_URLS=http://+:10000
+
 
 # Set the entry point
 ENTRYPOINT ["dotnet", "EComm.dll"]
