@@ -154,10 +154,11 @@ app.UseSwaggerUI();
 //     });
     
 // // }
-if(!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();    
-}
+// Render Config: Render already listens on https Protocol
+// if(!app.Environment.IsDevelopment())
+// {
+//     app.UseHttpsRedirection();    
+// }
 // app.UseHttpsRedirection();    
 
 
