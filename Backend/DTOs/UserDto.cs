@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-
+using EComm.Shared.Enums;
 namespace EComm.DTOs;
 
 public record UserDto
@@ -22,6 +22,8 @@ public record UserCreationDto
     public string Password { get; set; }
     [EmailAddress]
     public string Email { get; set; }
+
+    [EnumDataType(typeof(UserRole))]
     public string Role { get; set; }
 
 
