@@ -9,7 +9,7 @@ RUN dotnet restore
 
 # Copy the rest of the code
 COPY . ./
-COPY https/aspnetapp.pfx /https/aspnetapp.pfx
+COPY ./https/aspnetapp.pfx /https/aspnetapp.pfx
 WORKDIR /app
 
 # Build the app
