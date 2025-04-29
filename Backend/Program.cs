@@ -186,8 +186,8 @@ app.UseStaticFiles(new StaticFileOptions()
     RequestPath = "/img"
 });
 
-// app.SeedRoles();
-// app.SeedCategories();
+app.SeedRoles();
+app.SeedCategories();
 
 app.MapControllers();
 
