@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace EComm.Controllers
 {
     [ApiController]
-    [Route("api/auth")]
+    [Route("api/auth/users")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -33,12 +33,13 @@ namespace EComm.Controllers
                 var result = await _authService.RegisterUser(userDto);
                 return Ok(result);
             }
-            catch (UserNameExistsException e)
+            catch (UserRegistrationException e)
             {
                 return StatusCode(409, e.Message);
             }
             catch (Exception e)
             {
+
                 return StatusCode(500, e.Message);
 
             }
@@ -76,6 +77,26 @@ namespace EComm.Controllers
         {
             var usersDto = await _authService.GetUsers();
             return Ok(usersDto);
+        }
+
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteUserAccount(string userId)
+        {
+            try
+            {
+                await _authService.DeleteUser(userId);
+                return NoContent();
+            }
+            catch(UserNotFoundException e)
+            {
+                _logger.LogError(e.Message);
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"An Error occurred while tying to Delete the User {e.Message}");
+                return StatusCode(500, $"An Error occurred while tying to Delete the User {e.Message}");
+            }
         }
 
     }
