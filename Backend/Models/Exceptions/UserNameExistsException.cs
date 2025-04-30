@@ -1,8 +1,8 @@
 namespace EComm.Models.Exceptions;
 
-public class UserNameExistsException : Exception
+public class UserRegistrationException : Exception
 {
-    public UserNameExistsException(string message):base(message)
+    public UserRegistrationException(string message):base(message)
     {
         
     }

@@ -50,7 +50,6 @@ namespace EComm.Services
             {
                 user.Cart = new Cart { UserId = user.Id };
                 await _userManager.AddToRoleAsync(user, userDto.Role);
-                await _dbContext.Carts.AddAsync(user.Cart);
                 await _dbContext.SaveChangesAsync();
                 return new UserDto
                 {
@@ -63,7 +62,7 @@ namespace EComm.Services
 
             var errors = string.Join("; ", createdUser.Errors.Select(e => e.Description));
             _logger.LogError($"User Registration failed: {errors}");
-            throw new UserNameExistsException($"User Registration failed: {errors}");
+            throw new UserRegistrationException($"User Registration failed: {errors}");
 
         }
 
@@ -114,6 +113,18 @@ namespace EComm.Services
             }
 
             return usersDto;
+        }
+
+        public async Task DeleteUser(string userId)
+        {
+            var user = await _userManager.Users.SingleOrDefaultAsync(u=> u.Id.Equals(userId));
+            if (user is null)
+            {
+                _logger.LogError("User not Found");
+                throw new UserNotFoundException($"User with Id : {userId} Does Not Exist");   
+            }
+            _dbContext.Remove(user);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
