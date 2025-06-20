@@ -1,4 +1,6 @@
+import ProgressBarProvider from "@/component/ProgressBarProvider";
 import AppContextProvider from "@/context";
+import QueryClientProvider from "@/util/query-client-provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Head from "next/head";
@@ -29,7 +31,11 @@ export default function RootLayout({
         />
       </Head>
       <body className={inter.className}>
-        <AppContextProvider>{children}</AppContextProvider>
+        <QueryClientProvider>
+          <ProgressBarProvider>
+            <AppContextProvider>{children}</AppContextProvider>
+          </ProgressBarProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );
