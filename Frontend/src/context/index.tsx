@@ -322,10 +322,12 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    fetchProducts();
+    if (!products?.length) {
+      fetchProducts();
+    }
     fetchCart();
     fetchCategories();
-  }, []);
+  }, [products?.length]);
 
   return (
     <AppContext.Provider
