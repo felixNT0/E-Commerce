@@ -2,12 +2,13 @@
 import Button from "@/component/button";
 import Input from "@/component/input";
 import { useAppData } from "@/context";
+import routes from "@/routes";
 import {
   formikHelper,
   generateUniqueId,
   removeDataFromLocalStorage,
 } from "@/util/helper";
-import paths from "@/util/paths";
+
 import { Form, Formik } from "formik";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -74,7 +75,7 @@ const Checkout: React.FC<Props> = ({ id }) => {
       setTimeout(async () => {
         await makeOrder(order as any);
         enqueueSnackbar("Order placed successfully!", { variant: "success" });
-        router.push(paths.app.orders);
+        router.push(routes.app.orders);
         setIsLoading(false);
         removeDataFromLocalStorage("checkoutItems");
       }, 3000);

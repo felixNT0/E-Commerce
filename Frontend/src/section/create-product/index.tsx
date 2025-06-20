@@ -4,9 +4,9 @@ import Button from "@/component/button";
 import Input from "@/component/input";
 import Select from "@/component/select";
 import { useAppData } from "@/context";
+import routes from "@/routes";
 import { ProductItem, ProductPayload } from "@/types/product";
 import { formikHelper, generateUniqueId } from "@/util/helper";
-import paths from "@/util/paths";
 import { Form, Formik } from "formik";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -59,7 +59,7 @@ const CreateProduct = () => {
         enqueueSnackbar("Product added successfully!");
         resetForm();
         setIsLoading(false);
-        router.push(paths.app.home);
+        router.push(routes.app.home);
       }, 3000);
     } catch (error) {
       console.error("Error adding product:", error);

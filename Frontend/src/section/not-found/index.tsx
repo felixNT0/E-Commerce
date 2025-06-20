@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/component/button";
-import paths from "@/util/paths";
+import routes from "@/routes";
 import { useRouter } from "next/navigation";
 
 const NotFound = () => {
@@ -20,7 +20,7 @@ const NotFound = () => {
           <Button onClick={() => router.back()}>go Back</Button>
 
           <p
-            onClick={() => router.push(paths.app.contact)}
+            onClick={() => router.push(routes.app.contact)}
             className="text-sm font-semibold text-gray-900 w-full"
           >
             Contact support <span aria-hidden="true">&rarr;</span>

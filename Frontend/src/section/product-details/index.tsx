@@ -5,8 +5,8 @@ import Loader from "@/component/loader";
 import Modal from "@/component/modal";
 import { useAppData } from "@/context";
 import Header from "@/layout/header";
+import routes from "@/routes";
 import { ProductItem } from "@/types/product";
-import paths from "@/util/paths";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
@@ -46,7 +46,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
   };
 
   const handleEdit = () => {
-    router.push(`${paths.app.product}${paths.app.edit}/${id}`);
+    router.push(`${routes.app.product}${routes.app.edit}/${id}`);
   };
 
   const handleDelete = () => {
@@ -57,7 +57,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
     removeProduct(id);
     setModalOpen(false);
     enqueueSnackbar("Product deleted");
-    router.push(paths.app.home);
+    router.push(routes.app.home);
   };
 
   const cancelDelete = () => {
@@ -114,7 +114,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
             </Button>
             <Button
               onClick={() => {
-                router.push(`${paths.app.checkout}/${product.price}`);
+                router.push(`${routes.app.checkout}/${product.price}`);
                 handAddToCheckout();
               }}
             >

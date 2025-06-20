@@ -4,9 +4,9 @@ import Button from "@/component/button";
 import Input from "@/component/input";
 import Select from "@/component/select";
 import { useAppData } from "@/context";
+import routes from "@/routes";
 import { ProductItem, ProductPayload } from "@/types/product";
 import { formikHelper } from "@/util/helper";
-import paths from "@/util/paths";
 import { Form, Formik } from "formik";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -71,7 +71,7 @@ const EditProduct: React.FC<Props> = ({ id }) => {
         enqueueSnackbar("Product updated successfully!");
         resetForm();
         setIsLoading(false);
-        router.push(`${paths.app.product}/${id}`);
+        router.push(`${routes.app.product}/${id}`);
       }, 3000);
     } catch (error) {
       console.error("Error updating product:", error);

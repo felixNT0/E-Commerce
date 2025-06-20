@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-const paths = {
+const routes = {
   auth: {
     login: "/login",
     register: "/register",
@@ -25,4 +25,4 @@ const paths = {
   },
 };
 
-export default paths;
+export default routes;

@@ -1,12 +1,12 @@
 "use client";
 import Button from "@/component/button";
 import Input from "@/component/input";
+import routes from "@/routes";
 import {
   formikHelper,
   getStoredJSONValuesFromLocalStorage,
   setStoredJSONValuesToLocalStorage,
 } from "@/util/helper";
-import paths from "@/util/paths";
 import { Form, Formik } from "formik";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -130,7 +130,7 @@ const Login = () => {
         <div className="flex justify-center items-center mt-6 gap-1 text-sm">
           <p>Don’t have an account yet?</p>
           <Link
-            href={paths.auth.register}
+            href={routes.auth.register}
             className="hover:underline hover:text-[#216869]"
           >
             Register

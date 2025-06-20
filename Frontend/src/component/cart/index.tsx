@@ -1,8 +1,8 @@
 "use client";
 
 import { useAppData } from "@/context";
+import routes from "@/routes";
 import { ProductItem } from "@/types/product";
-import paths from "@/util/paths";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -157,7 +157,7 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
 
                     <div className="ml-4 flex flex-1 flex-col">
                       <Link
-                        href={`${paths.app.product}/${item.id}`}
+                        href={`${routes.app.product}/${item.id}`}
                         className="truncate text-base font-medium text-[#216869]"
                       >
                         <h3 className="!truncate">{item.name}</h3>
@@ -218,7 +218,7 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
                       selectedItems.length === 0 || cartItems.length === 0
                     }
                     onClick={() => {
-                      router.push(`${paths.app.checkout}/${total.toFixed(2)}`);
+                      router.push(`${routes.app.checkout}/${total.toFixed(2)}`);
                       addToCheckout(
                         cartItems.filter((cart) =>
                           selectedItems.includes(cart.id)

@@ -2,8 +2,8 @@
 import Button from "@/component/button";
 import IconButton from "@/component/icon-button";
 import Input from "@/component/input";
+import routes from "@/routes";
 import { formikHelper, setStoredJSONValuesToLocalStorage } from "@/util/helper";
-import paths from "@/util/paths";
 import { Form, Formik, useField } from "formik";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -207,7 +207,7 @@ const Register = () => {
         <div className="flex justify-center items-center mt-6 gap-1 text-sm">
           <p>Have an account?</p>
           <Link
-            href={paths.auth.login}
+            href={routes.auth.login}
             className="hover:underline hover:text-[#216869]"
           >
             Login

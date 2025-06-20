@@ -1,7 +1,7 @@
 import Button from "@/component/button";
 import { useAppData } from "@/context";
+import routes from "@/routes";
 import { ProductItem } from "@/types/product";
-import paths from "@/util/paths";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
@@ -41,7 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
       transition={{ duration: 0.3 }}
     >
       <div className="w-full relative">
-        <Link href={`${paths.app.product}/${item.id}`}>
+        <Link href={`${routes.app.product}/${item.id}`}>
           <img
             src={item.imageUrl}
             alt={item.name}

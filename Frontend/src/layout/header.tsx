@@ -3,8 +3,8 @@
 import CartDrawer from "@/component/cart";
 import NotificationDrawer from "@/component/notification";
 import { useAppData } from "@/context";
+import routes from "@/routes";
 import { getStoredJSONValuesFromLocalStorage } from "@/util/helper";
-import paths from "@/util/paths";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -67,26 +67,26 @@ const Navbar = () => {
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <Link
-              href={paths.app.about}
+              href={routes.app.about}
               className="px-3 py-2 rounded-md text-sm font-medium hover:bg-[#1a544f] transition"
             >
               About
             </Link>
             <Link
-              href={paths.app.services}
+              href={routes.app.services}
               className="px-3 py-2 rounded-md text-sm font-medium hover:bg-[#1a544f] transition"
             >
               Services
             </Link>
             <Link
-              href={paths.app.contact}
+              href={routes.app.contact}
               className="px-3 py-2 rounded-md text-sm font-medium hover:bg-[#1a544f] transition"
             >
               Contact
             </Link>
             {isLoggedIn && (
               <Link
-                href={paths.app.createProduct}
+                href={routes.app.createProduct}
                 className="px-3 py-2 rounded-md text-sm font-medium hover:bg-[#1a544f] transition"
               >
                 Create Product
@@ -136,21 +136,21 @@ const Navbar = () => {
                         >
                           <div className="py-1">
                             <Link
-                              href={paths.app.profile}
+                              href={routes.app.profile}
                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               onClick={toggleDropdown}
                             >
                               Profile
                             </Link>
                             <Link
-                              href={paths.app.orders}
+                              href={routes.app.orders}
                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               onClick={toggleDropdown}
                             >
                               Orders
                             </Link>
                             <Link
-                              href={paths.app.profile}
+                              href={routes.app.profile}
                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               onClick={toggleDropdown}
                             >
@@ -302,7 +302,7 @@ const Navbar = () => {
                 {isLoggedIn ? (
                   <>
                     <Link
-                      href={paths.app.createProduct}
+                      href={routes.app.createProduct}
                       className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#1a544f] transition"
                       onClick={toggleMenu}
                     >

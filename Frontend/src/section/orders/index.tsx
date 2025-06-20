@@ -3,7 +3,7 @@
 import Button from "@/component/button";
 import { useAppData } from "@/context";
 import Header from "@/layout/header";
-import paths from "@/util/paths";
+import routes from "@/routes";
 import Link from "next/link";
 import React from "react";
 
@@ -50,7 +50,9 @@ const OrderList: React.FC = () => {
                           alt={item.productName || "Product Image"}
                         />
                         <div className="min-w-0 flex-auto">
-                          <Link href={`${paths.app.product}/${item.productId}`}>
+                          <Link
+                            href={`${routes.app.product}/${item.productId}`}
+                          >
                             <p className="text-sm font-semibold leading-6 hover:underline text-[#216869]">
                               {item.productName || "Product Name"}
                             </p>

@@ -110,7 +110,7 @@ const MainPage = () => {
       {/* Main Content */}
       <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex max-sm:flex-col">
         {/* Filter Section */}
-        <div className="sm:fixed mb-5 top-24 w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-md max-lg:h-fit lg:h-[calc(100vh-7rem)] overflow-y-auto z-10">
+        <div className="sm:sticky mb-5 top-24 w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-md max-lg:h-fit lg:h-[calc(100vh-7rem)] overflow-y-auto z-10">
           <div className="flex flex-col gap-4">
             {/* Category Filter */}
             <div>
@@ -177,7 +177,7 @@ const MainPage = () => {
         </div>
 
         {/* Item Grid */}
-        <div className="flex-1 pl-4 lg:pl-[calc(25%+5rem)]">
+        <div className="lg:pl-4 w-full">
           {products?.length === 0 && (
             <div className="text-center py-10 text-lg font-semibold text-gray-600">
               No Product to display
