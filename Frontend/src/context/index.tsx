@@ -100,12 +100,15 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       const storedUser = await getStoredJSONValuesFromLocalStorage(
         "currentUser"
       );
+
       if (storedUser) {
-        setCurrentUser(storedUser);
+        // Sanitize user data
+        const sanitizedUser = JSON.parse(JSON.stringify(storedUser));
+        setCurrentUser(sanitizedUser);
       }
+
       setIsLoading(false);
     };
-
     fetchUser();
   }, []);
 
@@ -114,8 +117,11 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       const checkoutItems = await getStoredJSONValuesFromLocalStorage(
         "checkoutItems"
       );
+
       if (checkoutItems) {
-        setCheckoutItems(checkoutItems);
+        // Sanitize checkout items
+        const sanitizedItems = JSON.parse(JSON.stringify(checkoutItems));
+        setCheckoutItems(sanitizedItems);
       }
     };
 
@@ -125,21 +131,29 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const fetchOrderItems = async () => {
       const orderItems = await getStoredJSONValuesFromLocalStorage("orders");
+
       if (orderItems) {
-        setOrders(orderItems);
+        // Sanitize orders and handle dates
+        const sanitizedOrders = orderItems.map((order: Order) => ({
+          ...order,
+          orderDate: new Date(order.orderDate).toISOString(),
+        }));
+
+        setOrders(JSON.parse(JSON.stringify(sanitizedOrders)));
       }
     };
 
     fetchOrderItems();
   }, []);
 
+  // In AppContextProvider.tsx
   const fetchProducts = async () => {
     try {
       setIsLoadingProduct(true);
       const response = await fetch("https://fakestoreapi.com/products");
       const data = await response.json();
 
-      const mappedProducts: ProductItem[] = data.map((product: any) => ({
+      const mappedProducts: ProductItem[] = data?.map((product: any) => ({
         id: generateUniqueId(),
         name: product.title,
         category: product.category,
@@ -147,18 +161,24 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
         imageUrl: product.image,
       }));
 
-      const storedProducts =
-        (await getStoredJSONValuesFromLocalStorage("products")) || [];
-      if (storedProducts.length === 0) {
-        await setStoredJSONValuesToLocalStorage("products", [
-          ...storedProducts,
-          ...mappedProducts,
-        ]);
-      }
-      setProducts(() => [...storedProducts]);
+      const existingProducts = await getStoredJSONValuesFromLocalStorage(
+        "products"
+      );
 
+      // SANITIZE DATA BEFORE STORING
+      const sanitizedProducts = JSON.parse(
+        JSON.stringify(
+          Array.isArray(existingProducts) && existingProducts.length > 0
+            ? existingProducts
+            : mappedProducts
+        )
+      );
+
+      setProducts(sanitizedProducts);
+      await setStoredJSONValuesToLocalStorage("products", sanitizedProducts);
       setIsLoadingProduct(false);
     } catch (error) {
+      console.error("Product fetch error:", error);
       setIsLoadingProduct(false);
     }
   };
@@ -253,11 +273,15 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     updateProducts(updatedProducts);
   };
 
+  // Update all fetch functions similarly
   const fetchCart = async () => {
     try {
       const storedCart = await getStoredJSONValuesFromLocalStorage("cart");
+
       if (storedCart) {
-        setCart(storedCart);
+        // Sanitize cart data
+        const sanitizedCart = JSON.parse(JSON.stringify(storedCart));
+        setCart(sanitizedCart);
       }
     } catch (error) {
       console.error(`Error fetching cart data: ${error}`);
