@@ -1,4 +1,4 @@
-import Checkout from "@/section/checkout ";
+import Checkout from "@/section/checkout";
 import { Metadata, ResolvingMetadata } from "next";
 
 type Props = {
