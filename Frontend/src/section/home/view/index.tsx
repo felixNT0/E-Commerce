@@ -27,7 +27,7 @@ const MainPage = () => {
   const [noResults, setNoResults] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const { products, categories, isLoadingProduct } = useAppData();
+  const { products = [], categories, isLoadingProduct } = useAppData();
 
   const itemsPerPage = 12;
 
@@ -109,10 +109,8 @@ const MainPage = () => {
 
       {/* Main Content */}
       <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex max-sm:flex-col">
-        {/* Filter Section */}
         <div className="sm:sticky mb-5 top-24 w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-md max-lg:h-fit lg:h-[calc(100vh-7rem)] overflow-y-auto z-10">
           <div className="flex flex-col gap-4">
-            {/* Category Filter */}
             <div>
               <label className="block text-gray-700">Category</label>
               <Select
@@ -126,7 +124,6 @@ const MainPage = () => {
               />
             </div>
 
-            {/* Price Range Filter */}
             <div>
               <label className="block text-gray-700">Price Range</label>
               <div className="flex gap-4">
@@ -157,7 +154,6 @@ const MainPage = () => {
               </div>
             </div>
 
-            {/* Search Filter */}
             <div>
               <label className="block text-gray-700 pb-1">Search</label>
               <Input
@@ -176,7 +172,6 @@ const MainPage = () => {
           </div>
         </div>
 
-        {/* Item Grid */}
         <div className="lg:pl-4 w-full">
           {products?.length === 0 && (
             <div className="text-center py-10 text-lg font-semibold text-gray-600">
@@ -189,7 +184,7 @@ const MainPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {paginatedItems.map((items) => (
+              {paginatedItems?.map((items) => (
                 <ProductCard
                   key={items.id}
                   item={{
