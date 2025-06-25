@@ -1,12 +1,9 @@
 "use client";
+import { useLogin } from "@/api/auth";
 import Button from "@/component/button";
 import Input from "@/component/input";
 import routes from "@/routes";
-import {
-  formikHelper,
-  getStoredJSONValuesFromLocalStorage,
-  setStoredJSONValuesToLocalStorage,
-} from "@/util/helper";
+import { formikHelper } from "@/util/helper";
 import { Form, Formik } from "formik";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -32,35 +29,22 @@ const Login = () => {
   const router = useRouter();
   const [error, setError] = useState("");
 
+  const { login, loginLoading, loginError, isError } = useLogin();
+
   const handleSubmit = async (values: any) => {
     const { email, password } = values;
 
     try {
       setIsLoading(true);
       setError("");
-      const storedUser = await getStoredJSONValuesFromLocalStorage(
-        "currentUser"
-      );
 
-      if (
-        storedUser &&
-        storedUser.email === email &&
-        storedUser.password === password
-      ) {
-        setTimeout(async () => {
-          await setStoredJSONValuesToLocalStorage("currentUser", {
-            ...storedUser,
-            isLoggedIn: true,
-          });
-          router.push("/");
-          setIsLoading(false);
-        }, 3000);
-      } else {
-        setTimeout(() => {
-          setError("Invalid email or password");
-          setIsLoading(false);
-        }, 3000);
-      }
+      const response = await login({ userName: email, password });
+      console.log("Login response:", response);
+      // if (response?.data?.token) {
+      // setStoredJSONValuesToLocalStorage("token", response.data.token);
+      // enqueueSnackbar("Login successful", { variant: "success" });
+      // router.push(routes.app.home);
+      // }
     } catch (e) {
       enqueueSnackbar("An error occurred", { variant: "error" });
     }
@@ -110,7 +94,7 @@ const Login = () => {
                   />
 
                   <Button
-                    loading={isLoading}
+                    loading={loginLoading}
                     type={"submit"}
                     disabled={!isValid || !dirty}
                   >

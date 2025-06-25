@@ -1,47 +1,40 @@
-// import {useMutation, useQueryClient} from '@tanstack/react-query';
-// import {useMemo} from 'react';
-// import {
-//   ForgotPasswordPayload,
-//   LoginPayload,
-//   RegisterPayload,
-//   ResetPasswordPayload,
-//   Response,
-//   UpdateBioPayload,
-//   UpdateLocationPayload,
-//   UpdateProfessionalRecordPayload,
-//   VerifyOTPPayload,
-// } from '../types/auth';
-// import {endpoints, mutator} from '../utils/axios';
-// import {queryKeys} from '../utils/react-query';
+import { LoginPayload } from "@/types/auth";
+import { mutator } from "@/util/axios";
+import { endpoints } from "@/util/endpoints";
+import { queryKeys } from "@/util/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
 
-// export function useLogin() {
-//   const queryClient = useQueryClient();
-//   const {data, isPending, mutateAsync} = useMutation<
-//     Response,
-//     any,
-//     LoginPayload
-//   >({
-//     mutationFn: async (body: LoginPayload) =>
-//       await mutator<Response>({
-//         url: endpoints.auth.login,
-//         data: body,
-//         method: 'POST',
-//       }),
+export function useLogin() {
+  const queryClient = useQueryClient();
+  const { data, isPending, mutateAsync, error, isError } = useMutation<
+    Response,
+    any,
+    LoginPayload
+  >({
+    mutationFn: async (body: LoginPayload) =>
+      await mutator<Response>({
+        url: endpoints.auth.login,
+        data: body,
+        method: "POST",
+      }),
 
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({queryKey: queryKeys.user.root});
-//     },
-//   });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.user.root });
+    },
+  });
 
-//   return useMemo(
-//     () => ({
-//       loginData: data,
-//       loginLoading: isPending,
-//       login: mutateAsync,
-//     }),
-//     [isPending, data, mutateAsync],
-//   );
-// }
+  return useMemo(
+    () => ({
+      loginData: data,
+      loginLoading: isPending,
+      login: mutateAsync,
+      loginError: error,
+      isError,
+    }),
+    [isPending, data, mutateAsync]
+  );
+}
 
 // export function useRegister() {
 //   const queryClient = useQueryClient();
