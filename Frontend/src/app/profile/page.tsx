@@ -1,3 +1,5 @@
+// import ProfileAndSettings from "@/section/profile";
+
 import ProfileAndSettings from "@/section/profile";
 
 export const metadata = {
