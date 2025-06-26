@@ -15,12 +15,14 @@ const OrderList: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="dark:bg-gray-900 min-h-screen">
       <Header />
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-6  dark:text-gray-900">
         <div className="flex items-center mb-6 max-sm:mb-1 justify-between">
-          <h1 className="text-3xl font-bold text-gray-900 ">Order List</h1>{" "}
-          <h5 className="text-xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900  dark:text-gray-100 ">
+            Order List
+          </h1>{" "}
+          <h5 className="text-xl font-bold text-gray-900  dark:text-gray-100">
             Total Price: $
             {orders
               .reduce(
@@ -32,7 +34,9 @@ const OrderList: React.FC = () => {
         </div>
 
         {orders.length === 0 ? (
-          <p className="text-center text-gray-500 mt-3">No orders found.</p>
+          <p className="text-center text-gray-500 mt-3  dark:text-gray-400">
+            No orders found.
+          </p>
         ) : (
           <ul role="list" className="divide-y divide-gray-100">
             {orders.map((order) => (
@@ -100,7 +104,7 @@ const OrderList: React.FC = () => {
           </ul>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

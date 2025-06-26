@@ -56,7 +56,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
   return (
     <>
       <Header />
-      <div className="p-8 bg-gray-50 min-h-screen ">
+      <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen ">
         <div className="mx-auto max-w-2xl ">
           <Formik
             initialValues={initialData}
@@ -67,7 +67,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
               <Form>
                 {/* Profile Section */}
                 <div className="space-y-12 border-b border-gray-900/10 pb-12 ">
-                  <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-gray-100">
                     Edit Profile
                   </h2>
                   <p className="mt-1 text-sm leading-6 text-gray-600">
@@ -79,7 +79,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
                     <div className="sm:col-span-4">
                       <label
                         htmlFor="username"
-                        className="block text-sm font-medium leading-6 text-gray-900"
+                        className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                       >
                         Username
                       </label>
@@ -97,7 +97,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
                     <div className="col-span-full">
                       <label
                         htmlFor="about"
-                        className="block text-sm font-medium leading-6 text-gray-900"
+                        className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                       >
                         About
                       </label>
@@ -117,7 +117,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
                     <div className="col-span-full">
                       <label
                         htmlFor="photo"
-                        className="block text-sm font-medium leading-6 text-gray-900"
+                        className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                       >
                         Photo
                       </label>
@@ -141,7 +141,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
                           onClick={() =>
                             document.getElementById("photo-upload")?.click()
                           }
-                          className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                          className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold dark:text-gray-100 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                         >
                           Change
                         </Button>
@@ -160,11 +160,11 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
                     <div className="col-span-full">
                       <label
                         htmlFor="cover-photo"
-                        className="block text-sm font-medium leading-6 text-gray-900"
+                        className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                       >
                         Cover photo
                       </label>
-                      <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                      <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 dark:border-gray-400 px-6 py-10">
                         <div className="text-center">
                           <div className="mx-auto h-12 w-12 text-gray-300">
                             {/* Placeholder for cover photo */}
@@ -183,7 +183,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
                           <div className="mt-4 flex text-sm leading-6 text-gray-600">
                             <label
                               htmlFor="cover-photo-upload"
-                              className="relative cursor-pointer rounded-md bg-white font-semibold text-[#216869] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#216869] focus-within:ring-offset-2 hover:text-indigo-500"
+                              className="relative cursor-pointer rounded-md  bg-white font-semibold text-[#216869] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#216869] focus-within:ring-offset-2 hover:text-indigo-500"
                             >
                               <span>Upload a file</span>
                               <input
@@ -223,7 +223,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
                     <div className="sm:col-span-3">
                       <label
                         htmlFor="first-name"
-                        className="block text-sm font-medium leading-6 text-gray-900"
+                        className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                       >
                         First name
                       </label>
@@ -232,7 +232,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
                           id="first-name"
                           name="firstName"
                           placeholder="Jane"
-                          className="block w-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+                          className="block w-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:border-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
                           label={""}
                         />
                       </div>
@@ -241,7 +241,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
                     <div className="sm:col-span-3">
                       <label
                         htmlFor="last-name"
-                        className="block text-sm font-medium leading-6 text-gray-900"
+                        className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                       >
                         Last name
                       </label>
@@ -259,7 +259,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
                     <div className="sm:col-span-4">
                       <label
                         htmlFor="email"
-                        className="block text-sm font-medium leading-6 text-gray-900"
+                        className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                       >
                         Email address
                       </label>
@@ -278,7 +278,7 @@ const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
                     <div className="sm:col-span-4">
                       <label
                         htmlFor="country"
-                        className="block text-sm font-medium leading-6 text-gray-900"
+                        className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                       >
                         Country
                       </label>

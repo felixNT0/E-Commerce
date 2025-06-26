@@ -2,6 +2,7 @@
 
 import CartDrawer from "@/component/cart";
 import NotificationDrawer from "@/component/notification";
+import ThemeToggle from "@/component/theme/ThemeToggle";
 import { useAppData } from "@/context";
 import routes from "@/routes";
 import { getStoredJSONValuesFromLocalStorage } from "@/util/helper";
@@ -57,7 +58,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-[#216869] text-white top-0 sticky z-50 shadow">
+    <nav className="bg-[#216869] text-white  top-0 sticky z-50 shadow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-1 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -84,6 +85,7 @@ const Navbar = () => {
             >
               Contact
             </Link>
+
             {isLoggedIn && (
               <Link
                 href={routes.app.createProduct}
@@ -92,6 +94,8 @@ const Navbar = () => {
                 Create Product
               </Link>
             )}
+
+            <ThemeToggle />
 
             <div className="flex items-center space-x-4">
               {isLoggedIn ? (

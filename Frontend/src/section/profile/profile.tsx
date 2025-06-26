@@ -29,7 +29,7 @@ export default function ProfileDisplay({
   const fullName = `${profileData.firstName} ${profileData.lastName}`;
 
   return (
-    <>
+    <div className="dark:bg-gray-900 h-screen dark:text-white">
       <Header />
       <div className="max-w-2xl mx-auto p-6">
         <div className="w-full border p-3">
@@ -70,7 +70,7 @@ export default function ProfileDisplay({
                   )}
                 </div>
                 <div className="pb-2">
-                  <h1 className="text-2xl font-bold text-gray-900">
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                     {fullName}
                   </h1>
                   <p className="text-gray-600">@{profileData.username}</p>
@@ -93,7 +93,7 @@ export default function ProfileDisplay({
               {/* Bio Section */}
               {profileData.about && (
                 <div>
-                  <p className="text-gray-700 leading-relaxed">
+                  <p className="text-gray-700 leading-relaxed dark:text-gray-400">
                     {profileData.about}
                   </p>
                 </div>
@@ -164,6 +164,6 @@ export default function ProfileDisplay({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
