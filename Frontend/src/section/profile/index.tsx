@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
+import ProfileEdit from "./edit";
 import ProfileDisplay from "./profile";
-import Settings from "./setting";
 
 const ProfileAndSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -32,7 +32,7 @@ const ProfileAndSettings = () => {
 
   if (isEditing) {
     return (
-      <Settings
+      <ProfileEdit
         initialData={profileData}
         onSave={handleSave}
         onCancel={handleCancel}

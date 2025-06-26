@@ -32,7 +32,7 @@ type SettingsProps = {
   onSave: (newData: any) => void;
   onCancel: () => void;
 };
-const Settings = ({ initialData, onSave, onCancel }: SettingsProps) => {
+const ProfileEdit = ({ initialData, onSave, onCancel }: SettingsProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   interface ProfileAndSettingsProps {
@@ -314,4 +314,4 @@ const Settings = ({ initialData, onSave, onCancel }: SettingsProps) => {
   );
 };
 
-export default Settings;
+export default ProfileEdit;
