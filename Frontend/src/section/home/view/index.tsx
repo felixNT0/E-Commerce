@@ -103,16 +103,18 @@ const MainPage = () => {
   if (isLoadingProduct) return <Loader />;
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       {/* Header */}
       <Header />
 
       {/* Main Content */}
       <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex max-sm:flex-col">
-        <div className="sm:sticky mb-5 top-24 w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-md max-lg:h-fit lg:h-[calc(100vh-7rem)] overflow-y-auto z-10">
+        <div className="sm:sticky mb-5 top-24 w-full lg:w-1/4 bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md max-lg:h-fit lg:h-[calc(100vh-7rem)] overflow-y-auto z-10">
           <div className="flex flex-col gap-4">
             <div>
-              <label className="block text-gray-700">Category</label>
+              <label className="block text-gray-700 dark:text-gray-100">
+                Category
+              </label>
               <Select
                 textColor
                 name="category"
@@ -121,17 +123,20 @@ const MainPage = () => {
                   handleFilterChange("category", value);
                 }}
                 options={categories}
+                className="dark:text-gray-400"
               />
             </div>
 
             <div>
-              <label className="block text-gray-700">Price Range</label>
+              <label className="block text-gray-700  dark:text-gray-100">
+                Price Range
+              </label>
               <div className="flex gap-4">
                 <Input
                   type="number"
                   name="minPrice"
                   textColor
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                  className="mt-1 block w-full border-gray-300 dark:text-gray-400 rounded-md shadow-sm"
                   placeholder="Min Price"
                   value={filter.minPrice}
                   onChange={(e) =>
@@ -143,7 +148,7 @@ const MainPage = () => {
                   textColor
                   type="number"
                   name="maxPrice"
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                  className="mt-1 block w-full border-gray-300 dark:text-gray-400 rounded-md shadow-sm"
                   placeholder="Max Price"
                   value={filter.maxPrice}
                   onChange={(e) =>
@@ -155,12 +160,14 @@ const MainPage = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 pb-1">Search</label>
+              <label className="block text-gray-700  dark:text-gray-100 pb-1">
+                Search
+              </label>
               <Input
                 textColor
                 type="text"
                 name="searchQuery"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                className="mt-1 block w-full border-gray-300 dark:text-gray-400 rounded-md shadow-sm"
                 placeholder="Search by name"
                 value={filter.searchQuery}
                 onChange={(e) =>
@@ -174,12 +181,12 @@ const MainPage = () => {
 
         <div className="lg:pl-4 w-full">
           {products?.length === 0 && (
-            <div className="text-center py-10 text-lg font-semibold text-gray-600">
+            <div className="text-center py-10 text-lg font-semibold text-gray-600  dark:text-gray-100">
               No Product to display
             </div>
           )}
           {products?.length > 0 && noResults ? (
-            <div className="text-center py-10 text-lg font-semibold text-gray-600">
+            <div className="text-center py-10 text-lg font-semibold text-gray-600  dark:text-gray-100">
               No results found. Please try adjusting your filters.
             </div>
           ) : (

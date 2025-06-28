@@ -1,4 +1,5 @@
 import ProgressBarProvider from "@/component/ProgressBarProvider";
+import ThemeProvider from "@/component/theme/ThemeProvider";
 import AppContextProvider from "@/context";
 import QueryClientProvider from "@/util/query-client-provider";
 import type { Metadata } from "next";
@@ -31,11 +32,13 @@ export default function RootLayout({
         />
       </Head>
       <body className={inter.className}>
-        <QueryClientProvider>
-          <ProgressBarProvider>
-            <AppContextProvider>{children}</AppContextProvider>
-          </ProgressBarProvider>
-        </QueryClientProvider>
+        <ThemeProvider>
+          <QueryClientProvider>
+            <ProgressBarProvider>
+              <AppContextProvider>{children}</AppContextProvider>
+            </ProgressBarProvider>
+          </QueryClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
