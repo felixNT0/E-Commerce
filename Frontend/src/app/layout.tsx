@@ -5,6 +5,7 @@ import QueryClientProvider from "@/util/query-client-provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Head from "next/head";
+import ClientOnly from "./clientOnly";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -35,7 +36,9 @@ export default function RootLayout({
         <ThemeProvider>
           <QueryClientProvider>
             <ProgressBarProvider>
-              <AppContextProvider>{children}</AppContextProvider>
+              <ClientOnly>
+                <AppContextProvider>{children}</AppContextProvider>
+              </ClientOnly>
             </ProgressBarProvider>
           </QueryClientProvider>
         </ThemeProvider>

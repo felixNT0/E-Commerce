@@ -208,19 +208,17 @@ const MainPage = () => {
 
           {/* Pagination Controls */}
           {filteredItems.length > itemsPerPage && (
-            <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-6">
+            <div className="flex items-center justify-between border-t border-gray-200 bg-white dark:bg-gray-900 px-4 py-3 sm:px-6 mt-6">
               <div className="flex sm:flex-1 max-sm:flex-col max-sm:gap-4 sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-gray-700 dark:text-gray-500">
                     Showing
                     <span className="font-medium">
-                      {" "}
-                      {currentPage * itemsPerPage - itemsPerPage + 1}{" "}
+                      {currentPage * itemsPerPage - itemsPerPage + 1}
                     </span>
                     to
                     <span className="font-medium">
-                      {" "}
-                      {Math.min(currentPage * itemsPerPage, totalItems)}{" "}
+                      {Math.min(currentPage * itemsPerPage, totalItems)}
                     </span>
                     of
                     <span className="font-medium"> {totalItems} </span>
@@ -236,7 +234,7 @@ const MainPage = () => {
                       onClick={() => handlePageChange(currentPage - 1)}
                       className={`relative inline-flex items-center ${
                         currentPage === 1 &&
-                        "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        "bg-gray-300 dark:bg-gray-900  text-gray-500 cursor-not-allowed"
                       }  rounded-l-md px-4  py-2 text-sm font-semibold text-[#216869] ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0`}
                       disabled={currentPage === 1}
                     >
@@ -264,7 +262,7 @@ const MainPage = () => {
                       onClick={() => handlePageChange(currentPage + 1)}
                       className={`elative inline-flex items-center rounded-r-md px-4 ${
                         currentPage === totalPages &&
-                        "bg-gray-400 text-gray-500 cursor-not-allowed"
+                        "bg-gray-400  dark:bg-gray-900  text-gray-500 cursor-not-allowed"
                       } py-2 text-sm font-semibold text-[#216869] ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0`}
                       disabled={currentPage === totalPages}
                     >
