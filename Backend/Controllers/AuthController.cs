@@ -53,7 +53,7 @@ namespace EComm.Controllers
             try
             {
                 var result = await _authService.LoginUser(loginDto);
-                if (result is null) return Unauthorized("Username or Password is incorrect");
+                if (result is null) return Unauthorized("Email or Password is incorrect");
                 return Ok(result);
             }
             catch (UserLoginException e)

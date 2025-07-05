@@ -11,8 +11,18 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
 
     }
+    
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
 
-    public DbSet<Product> Products {get; set;}
+        builder.Entity<AppUser>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+    }
+
+
+    public DbSet<Product> Products { get; set; }
     public DbSet<Image> Images { get; set; }  
 
     public DbSet<Category> Categories { get; set; }

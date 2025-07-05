@@ -89,6 +89,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+});
+
 var key = Encoding.UTF8.GetBytes(builder.Configuration["JWTSettings:Secret"]);
 
 builder.Services.AddAuthentication(options =>
@@ -139,38 +144,6 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
-// // Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI(options =>
-//     {
-//         options.SwaggerEndpoint("/swagger/v1/swagger.json", "EComm API V1");
-//         options.RoutePrefix = string.Empty;
-
-//         // Force HTTPS for endpoints inside container
-//         // options.ConfigObject.AdditionalItems["https"] = true;
-//     });
-    
-// // }
-// Render Config: Render already listens on https Protocol
-// if(!app.Environment.IsDevelopment())
-// {
-//     app.UseHttpsRedirection();    
-// }
-// app.UseHttpsRedirection();    
-
-
-// app.Use(async (context, next) =>
-// {
-//     if (context.Request.Path == "/")
-//     {
-//         context.Response.Redirect("/swagger");
-//         return;
-//     }
-//     await next();
-// });
 
 app.UseAuthentication();
 app.UseAuthorization();

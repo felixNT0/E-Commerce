@@ -69,17 +69,17 @@ namespace EComm.Services
         public async Task<LoginDto> LoginUser(UserLoginDto loginDto)
         {
 
-            var user = await _userManager.FindByNameAsync(loginDto.UserName);
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user is null)
             {
                 _logger.LogError("User not Found");
-                throw new UserNotFoundException($"User with Username : {loginDto.UserName} Does Not Exist");
+                throw new UserNotFoundException($"User with Email : {loginDto.Email} Does Not Exist");
             }
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
             if (!result.Succeeded)
             {
                 _logger.LogError($"wrong Password");
-                throw new InvalidUserCredentialsException("Username or Password is incorrect");
+                throw new InvalidUserCredentialsException("Email or Password is incorrect");
             }
             return new LoginDto
             {
