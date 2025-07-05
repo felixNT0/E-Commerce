@@ -9,4 +9,4 @@
 # Ignore build results
 /dist/
 
-appsettings.Development.json
+appsettings.*
