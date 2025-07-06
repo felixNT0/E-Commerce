@@ -9,6 +9,9 @@ namespace EComm.Contracts
 {
     public interface IPaymentService
     {
-        Task<TransactionInitializationResponse> InitializePayment(Payment payment, string userEmail);
+        Task<TransactionInitializationResponse> InitializePayment(
+            Payment payment,
+            string userEmail
+        );
     }
 }

@@ -7,9 +7,7 @@ namespace EComm.Models.Exceptions
 {
     public class UserNotFoundException : Exception
     {
-        public UserNotFoundException(string message) : base(message)
-        {
-            
-        }
+        public UserNotFoundException(string message)
+            : base(message) { }
     }
 }

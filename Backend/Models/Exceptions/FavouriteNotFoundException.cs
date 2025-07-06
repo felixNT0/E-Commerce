@@ -7,9 +7,7 @@ namespace EComm.Models.Exceptions
 {
     public class FavouriteNotFoundException : Exception
     {
-        public FavouriteNotFoundException(string message) : base(message)
-        {
-            
-        }
+        public FavouriteNotFoundException(string message)
+            : base(message) { }
     }
 }

@@ -19,9 +19,11 @@ namespace EComm.Controllers
         private readonly ICategoryService _categoryService;
         private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(IProductService productService, 
-                                  ICategoryService categoryService,
-                                  ILogger<CategoryController> logger)
+        public CategoryController(
+            IProductService productService,
+            ICategoryService categoryService,
+            ILogger<CategoryController> logger
+        )
         {
             _productService = productService;
             _categoryService = categoryService;
@@ -29,21 +31,32 @@ namespace EComm.Controllers
         }
 
         [HttpGet("{id:int}/products")]
-        [OutputCache(Duration = 60, Tags = new[] {"productsByCategoryList"})]
-        public async Task<IActionResult> GetCategoryProducts(int id, int page = 1, int pageSize = 10)
+        [OutputCache(Duration = 60, Tags = new[] { "productsByCategoryList" })]
+        public async Task<IActionResult> GetCategoryProducts(
+            int id,
+            int page = 1,
+            int pageSize = 10
+        )
         {
             try
             {
-                var productsDto = await  _productService.GetProductsByCategoryAsync(id, page, pageSize); 
-                return Ok(productsDto);   
+                var productsDto = await _productService.GetProductsByCategoryAsync(
+                    id,
+                    page,
+                    pageSize
+                );
+                return Ok(productsDto);
             }
             catch (Exception e)
             {
-                _logger.LogError($"An Error occured while trying to get the products for category {id} : {e.Message}");
-                return StatusCode(500, $"An Error occured while trying to get the products for category {id} : {e.Message}");
+                _logger.LogError(
+                    $"An Error occured while trying to get the products for category {id} : {e.Message}"
+                );
+                return StatusCode(
+                    500,
+                    $"An Error occured while trying to get the products for category {id} : {e.Message}"
+                );
             }
-            
-
         }
 
         [HttpGet]
@@ -56,10 +69,14 @@ namespace EComm.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"An Error Occured while trying to get the Categories : {e.Message} ");
-                return StatusCode(500, $"An Error Occured while trying to get the Categories : {e.Message} ");
+                _logger.LogError(
+                    $"An Error Occured while trying to get the Categories : {e.Message} "
+                );
+                return StatusCode(
+                    500,
+                    $"An Error Occured while trying to get the Categories : {e.Message} "
+                );
             }
         }
-        
     }
 }

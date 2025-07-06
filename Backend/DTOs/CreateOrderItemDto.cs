@@ -8,6 +8,5 @@ namespace EComm.DTOs
     public record CreateOrderItemDto
     {
         public Guid CartItemId { get; set; }
-        
     }
 }

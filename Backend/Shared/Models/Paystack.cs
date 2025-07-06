@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-
 namespace EComm.Shared.Models
 {
-    public class Paystack
-    {
-
-    }
+    public class Paystack { }
 
     public class TransactionInitializationResponse
     {
@@ -26,8 +22,6 @@ namespace EComm.Shared.Models
         public string AccessCode { get; set; }
         public string Reference { get; set; }
     }
-
-
 
     public class PaystackWebhookEvent
     {
@@ -111,7 +105,7 @@ namespace EComm.Shared.Models
         public string AuthorizationCode { get; set; }
         public string Bin { get; set; }
         public string Last4 { get; set; }
-        
+
         [JsonPropertyName("exp_month")]
         public string ExpMonth { get; set; }
 
@@ -129,5 +123,4 @@ namespace EComm.Shared.Models
         [JsonPropertyName("account_name")]
         public string AccountName { get; set; }
     }
-
 }

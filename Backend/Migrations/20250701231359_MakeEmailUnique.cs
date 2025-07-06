@@ -14,15 +14,14 @@ namespace EComm.Migrations
                 name: "IX_AspNetUsers_Email",
                 table: "AspNetUsers",
                 column: "Email",
-                unique: true);
+                unique: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_AspNetUsers_Email",
-                table: "AspNetUsers");
+            migrationBuilder.DropIndex(name: "IX_AspNetUsers_Email", table: "AspNetUsers");
         }
     }
 }

@@ -7,12 +7,11 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using EComm.Contracts;
 using EComm.DTOs;
+using EComm.Extensions;
 using EComm.Models.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using EComm.Extensions;
-using Microsoft.AspNetCore.Authorization;
-
 
 namespace EComm.Controllers
 {
@@ -23,8 +22,7 @@ namespace EComm.Controllers
         private readonly ILogger<CartController> _logger;
         private readonly ICartService _cartService;
 
-        public CartController(ILogger<CartController> logger,
-                              ICartService cartService)
+        public CartController(ILogger<CartController> logger, ICartService cartService)
         {
             _logger = logger;
             _cartService = cartService;
@@ -34,7 +32,7 @@ namespace EComm.Controllers
         [HttpPost]
         public async Task<IActionResult> AddToCart(AddToCartDto cartDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return Unauthorized();
             }
@@ -56,10 +54,11 @@ namespace EComm.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return StatusCode(500, $"An Error occured while trying to add an item to the cart {e.Message}");
+                return StatusCode(
+                    500,
+                    $"An Error occured while trying to add an item to the cart {e.Message}"
+                );
             }
-
-
         }
 
         [Authorize]
@@ -75,18 +74,22 @@ namespace EComm.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"An Error Occured while trying to get the users Cart : {e.Message}");
-                return StatusCode(500, $"An Error Occured while trying to get the users Cart : {e.Message}");
-
+                _logger.LogError(
+                    $"An Error Occured while trying to get the users Cart : {e.Message}"
+                );
+                return StatusCode(
+                    500,
+                    $"An Error Occured while trying to get the users Cart : {e.Message}"
+                );
             }
         }
 
-
         [Authorize]
         [HttpPost("collection")]
-        public async Task<IActionResult> AddToCartCollection(AddToCartCollectionDto addToCartCollectionDto)
+        public async Task<IActionResult> AddToCartCollection(
+            AddToCartCollectionDto addToCartCollectionDto
+        )
         {
-
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -95,9 +98,11 @@ namespace EComm.Controllers
             try
             {
                 var userId = User.GetUserId();
-                var cartCollection = await _cartService.AddToCartCollectionAsync(userId, addToCartCollectionDto);
+                var cartCollection = await _cartService.AddToCartCollectionAsync(
+                    userId,
+                    addToCartCollectionDto
+                );
                 return Created("", new { cartItems = cartCollection.cartItems });
-
             }
             catch (CartNotFoundException e)
             {
@@ -107,7 +112,10 @@ namespace EComm.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(500, $"An Error occured while trying to add collection of cartItems to the cart");
+                return StatusCode(
+                    500,
+                    $"An Error occured while trying to add collection of cartItems to the cart"
+                );
             }
         }
 
@@ -134,13 +142,19 @@ namespace EComm.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(500, $"An Error occured while trying to remove the cartItems from the cart");
+                return StatusCode(
+                    500,
+                    $"An Error occured while trying to remove the cartItems from the cart"
+                );
             }
         }
 
         [Authorize]
         [HttpPut("{cartItemId:Guid}")]
-        public async Task<IActionResult> UpdateCartItem(Guid cartItemId, [FromBody] UpdateCartItemDto cartItemDto)
+        public async Task<IActionResult> UpdateCartItem(
+            Guid cartItemId,
+            [FromBody] UpdateCartItemDto cartItemDto
+        )
         {
             if (!ModelState.IsValid)
             {
@@ -185,6 +199,5 @@ namespace EComm.Controllers
                 return StatusCode(500, $"An error occurred while clearing the cart");
             }
         }
-
     }
 }

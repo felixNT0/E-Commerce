@@ -7,9 +7,7 @@ namespace EComm.Models.Exceptions
 {
     public class ImageProcessingException : Exception
     {
-        public ImageProcessingException(string message) : base(message)
-        {
-            
-        }
+        public ImageProcessingException(string message)
+            : base(message) { }
     }
 }

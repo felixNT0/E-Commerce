@@ -11,12 +11,11 @@ public class CartItemService : ICartItemService
     public CartItemService(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
-            
     }
 
     public CartItem CreateCartItem(Guid productId)
     {
-        var cartItem = new CartItem { ProductId = productId};
+        var cartItem = new CartItem { ProductId = productId };
         return cartItem;
     }
 }

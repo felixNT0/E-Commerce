@@ -10,9 +10,9 @@ public class AppUser : IdentityUser
 
     public Favourite? Favourites { get; set; }
 
-    public Cart? Cart { get; set; } 
+    public Cart? Cart { get; set; }
 
     public List<Order?> Orders { get; set; } = [];
-    
+
     public List<Notification?> Notifications { get; set; } = [];
 }

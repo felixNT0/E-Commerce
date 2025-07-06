@@ -11,7 +11,10 @@ namespace EComm.Contracts
         Task AddCartItemAsync(Guid productId, string userId);
         Task<CartDto> GetCartAsync(string userId);
 
-        Task<(IEnumerable<CartItemDto>cartItems, string cartIds)> AddToCartCollectionAsync(string userId, AddToCartCollectionDto addToCartCollectionDto);
+        Task<(IEnumerable<CartItemDto> cartItems, string cartIds)> AddToCartCollectionAsync(
+            string userId,
+            AddToCartCollectionDto addToCartCollectionDto
+        );
 
         Task RemoveCartItem(string userId, Guid cartItemId);
 

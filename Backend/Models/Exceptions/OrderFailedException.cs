@@ -7,9 +7,7 @@ namespace EComm.Models.Exceptions
 {
     public class OrderFailedException : Exception
     {
-        public OrderFailedException(string message) : base(message)
-        {
-            
-        }
+        public OrderFailedException(string message)
+            : base(message) { }
     }
 }

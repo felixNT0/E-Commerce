@@ -20,9 +20,11 @@ namespace EComm.Controllers
         private readonly IOutputCacheStore _cache;
         private readonly ILogger<ProductController> _logger;
 
-        public ProductController(IProductService productService,
-                                 ILogger<ProductController> logger,
-                                 IOutputCacheStore cache)
+        public ProductController(
+            IProductService productService,
+            ILogger<ProductController> logger,
+            IOutputCacheStore cache
+        )
         {
             _productService = productService;
             _cache = cache;
@@ -40,7 +42,11 @@ namespace EComm.Controllers
                 var createdProductDto = await _productService.CreateProductAsync(productDto);
                 await _cache.EvictByTagAsync("productsList", CancellationToken.None);
                 await _cache.EvictByTagAsync("productsByCategoryList", CancellationToken.None);
-                return CreatedAtAction(nameof(GetProduct), new { Id = createdProductDto.Id }, createdProductDto);
+                return CreatedAtAction(
+                    nameof(GetProduct),
+                    new { Id = createdProductDto.Id },
+                    createdProductDto
+                );
             }
             catch (CategoryNotFoundException e)
             {
@@ -48,7 +54,6 @@ namespace EComm.Controllers
             }
             catch (ImageProcessingException e)
             {
-
                 return BadRequest(e.Message);
             }
             catch (Exception e)
@@ -71,13 +76,13 @@ namespace EComm.Controllers
             }
             catch (System.Exception e)
             {
-                return StatusCode(500, $"An Error Occured while trying to get the product: {e.Message}");
+                return StatusCode(
+                    500,
+                    $"An Error Occured while trying to get the product: {e.Message}"
+                );
             }
-
-
         }
 
-        
         [HttpGet]
         [OutputCache(Duration = 60, Tags = new[] { "productsList" })]
         public async Task<IActionResult> GetProducts(int page = 1, int pageSize = 10)
@@ -88,7 +93,6 @@ namespace EComm.Controllers
             var result = await _productService.GetAllProductsAsync(page, pageSize);
             return Ok(result);
         }
-
 
         [HttpPut("{id:Guid}")]
         [Authorize(Roles = "Admin")]
@@ -111,20 +115,24 @@ namespace EComm.Controllers
             }
             catch (ProductUpdateException e)
             {
-                return StatusCode(500, $"An Error occured while trying to update the product : {e.Message}");
+                return StatusCode(
+                    500,
+                    $"An Error occured while trying to update the product : {e.Message}"
+                );
             }
             catch (Exception e)
             {
-
-                return StatusCode(500, $"An Error occured while trying to update the product : {e.Message}");
+                return StatusCode(
+                    500,
+                    $"An Error occured while trying to update the product : {e.Message}"
+                );
             }
-
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> ProductSearch([FromQuery]ProductSearchDto searchDto)
+        public async Task<IActionResult> ProductSearch([FromQuery] ProductSearchDto searchDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
@@ -135,7 +143,9 @@ namespace EComm.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"An Error Occured while trying to get Products with searhParameter {searchDto.Query} and MinPrice {searchDto.MinPrice} and MaxPrice {searchDto.MaxPrice} with error : {e.Message}");
+                _logger.LogError(
+                    $"An Error Occured while trying to get Products with searhParameter {searchDto.Query} and MinPrice {searchDto.MinPrice} and MaxPrice {searchDto.MaxPrice} with error : {e.Message}"
+                );
                 return StatusCode(500, "An Error Occured while trying to get Products");
             }
         }
@@ -157,13 +167,18 @@ namespace EComm.Controllers
             }
             catch (ProductDeletionException e)
             {
-                return StatusCode(500, $"An Error Ocurred while trying to Delete the product : {e.Message}");
+                return StatusCode(
+                    500,
+                    $"An Error Ocurred while trying to Delete the product : {e.Message}"
+                );
             }
             catch (Exception e)
             {
-                return StatusCode(500, $"An Error Ocurred while trying to Delete the product : {e.Message}");
+                return StatusCode(
+                    500,
+                    $"An Error Ocurred while trying to Delete the product : {e.Message}"
+                );
             }
-
         }
     }
 }

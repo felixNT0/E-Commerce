@@ -12,14 +12,17 @@ namespace EComm.Services
         private readonly ILogger<QueuedHostedService> _logger;
         private readonly IServiceProvider _serviceProvider;
 
-        public QueuedHostedService(IBackgroundTaskQueue backgroundTaskQueue,
-                                ILogger<QueuedHostedService> logger,
-                                IServiceProvider serviceProvider)
+        public QueuedHostedService(
+            IBackgroundTaskQueue backgroundTaskQueue,
+            ILogger<QueuedHostedService> logger,
+            IServiceProvider serviceProvider
+        )
         {
             _queue = backgroundTaskQueue;
             _logger = logger;
             _serviceProvider = serviceProvider;
         }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (await _queue.WaitForNextRead(stoppingToken))
@@ -37,7 +40,6 @@ namespace EComm.Services
                     _logger.LogError(ex, "Error occurred executing: {WorkItem}.", nameof(workItem));
                     throw;
                 }
-                
             }
         }
     }

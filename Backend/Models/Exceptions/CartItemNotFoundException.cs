@@ -7,9 +7,7 @@ namespace EComm.Models.Exceptions
 {
     public class CartItemNotFoundException : Exception
     {
-        public CartItemNotFoundException(string message) : base(message)
-        {
-            
-        }
+        public CartItemNotFoundException(string message)
+            : base(message) { }
     }
 }

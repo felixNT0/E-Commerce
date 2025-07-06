@@ -8,6 +8,5 @@ namespace EComm.DTOs
     public record RemoveFavouriteDto
     {
         public string UserId { get; set; }
-
     }
 }

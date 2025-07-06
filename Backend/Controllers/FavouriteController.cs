@@ -20,7 +20,10 @@ namespace EComm.Controllers
         private readonly ILogger<FavouriteController> _logger;
         private readonly IFavouriteService _favouriteService;
 
-        public FavouriteController(ILogger<FavouriteController> logger, IFavouriteService favouriteService)
+        public FavouriteController(
+            ILogger<FavouriteController> logger,
+            IFavouriteService favouriteService
+        )
         {
             _logger = logger;
             _favouriteService = favouriteService;
@@ -33,15 +36,22 @@ namespace EComm.Controllers
             try
             {
                 var userId = User.GetUserId();
-                var favouritesDto = await _favouriteService.AddToUsersFavourite(userId, favouriteDto);
+                var favouritesDto = await _favouriteService.AddToUsersFavourite(
+                    userId,
+                    favouriteDto
+                );
                 return Ok(favouritesDto);
             }
             catch (Exception e)
             {
-                _logger.LogError($"An Error occured while trying to Add this product to the Users Favourites : {e.Message}");
-                return StatusCode(500, $"An Error occured while trying to Add this product to the Users Favourites : {e.Message}");
+                _logger.LogError(
+                    $"An Error occured while trying to Add this product to the Users Favourites : {e.Message}"
+                );
+                return StatusCode(
+                    500,
+                    $"An Error occured while trying to Add this product to the Users Favourites : {e.Message}"
+                );
             }
-
         }
 
         [HttpGet]
@@ -58,10 +68,14 @@ namespace EComm.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"An Error occured while trying to get the Users favorite products : {e.Message}");
-                return StatusCode(500, $"An Error occured while trying to get the Users favorite products : {e.Message}");
+                _logger.LogError(
+                    $"An Error occured while trying to get the Users favorite products : {e.Message}"
+                );
+                return StatusCode(
+                    500,
+                    $"An Error occured while trying to get the Users favorite products : {e.Message}"
+                );
             }
-
         }
 
         [HttpDelete("{productId:Guid}")]
@@ -86,10 +100,11 @@ namespace EComm.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"An Error occured while trying to Delete the product with id {productId} from the Users favorites  : {e.Message}");
+                _logger.LogError(
+                    $"An Error occured while trying to Delete the product with id {productId} from the Users favorites  : {e.Message}"
+                );
                 return StatusCode(500, e.Message);
             }
         }
-
     }
 }

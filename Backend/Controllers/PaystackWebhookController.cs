@@ -7,10 +7,8 @@ using EComm.Contracts;
 using EComm.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace EComm.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     public class PaystackWebhookController : ControllerBase
@@ -19,15 +17,15 @@ namespace EComm.Controllers
         private readonly ILogger<PaystackWebhookController> _logger;
         private readonly IBackgroundTaskQueue _queue;
 
-        public PaystackWebhookController(IPaystackWebhookHandlerService webhookService,
-                                        ILogger<PaystackWebhookController> logger,
-                                        IBackgroundTaskQueue backgroundTaskQueue)
+        public PaystackWebhookController(
+            IPaystackWebhookHandlerService webhookService,
+            ILogger<PaystackWebhookController> logger,
+            IBackgroundTaskQueue backgroundTaskQueue
+        )
         {
-
             _webhookService = webhookService;
             _logger = logger;
             _queue = backgroundTaskQueue;
-
         }
 
         [HttpPost]
@@ -43,13 +41,8 @@ namespace EComm.Controllers
                 return BadRequest("Payload is empty.");
             }
 
-
-
             var isValid = _webhookService.VerifySignature(json, signature);
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             if (!isValid)
             {
                 return Unauthorized();
@@ -62,14 +55,17 @@ namespace EComm.Controllers
                 {
                     try
                     {
-                        var webhookService = serviceProvider.GetRequiredService<IPaystackWebhookHandlerService>();
+                        var webhookService =
+                            serviceProvider.GetRequiredService<IPaystackWebhookHandlerService>();
                         await webhookService.HandleEvent(eventPayload);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
-                        _logger.LogError(e.StackTrace, $"An Error Occured while Trying to Execute the background Task {e.Message}");
+                        _logger.LogError(
+                            e.StackTrace,
+                            $"An Error Occured while Trying to Execute the background Task {e.Message}"
+                        );
                     }
-
                 });
                 return Ok();
             }

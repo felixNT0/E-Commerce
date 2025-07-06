@@ -26,12 +26,13 @@ namespace EComm.Services
         private readonly IHubContext<NotificationHub, INotificationClient> _hubContext;
         private readonly INotificationService _notificationService;
 
-        public PaystackWebhookHandlerService(IConfiguration config,
-                                            ILogger<PaystackWebhookHandlerService> logger,
-                                            ApplicationDbContext dbContext,
-                                            IHubContext<NotificationHub, INotificationClient> hubContext,
-                                            INotificationService notificationService
-                                            )
+        public PaystackWebhookHandlerService(
+            IConfiguration config,
+            ILogger<PaystackWebhookHandlerService> logger,
+            ApplicationDbContext dbContext,
+            IHubContext<NotificationHub, INotificationClient> hubContext,
+            INotificationService notificationService
+        )
         {
             _secret = config["PaystackSettings:SecretKey"];
             _logger = logger;
@@ -40,17 +41,19 @@ namespace EComm.Services
             _notificationService = notificationService;
         }
 
-
         public async Task HandleEvent(PaystackWebhookEvent eventPayload)
         {
             var reference = Guid.Parse(eventPayload.Data.Reference);
-            var payment = await _dbContext.Payments.Where(p => p.TransactionId.Equals(reference)).Include(p => p.Order).ThenInclude(o=> o.OrderItems).SingleOrDefaultAsync();
+            var payment = await _dbContext
+                .Payments.Where(p => p.TransactionId.Equals(reference))
+                .Include(p => p.Order)
+                .ThenInclude(o => o.OrderItems)
+                .SingleOrDefaultAsync();
 
             if (payment is null)
             {
                 _logger.LogError($"payment with referenceId {reference} does not exist");
                 throw new PaymentNotFoundException("Payment does not Exist");
-
             }
             if (eventPayload.Event == "charge.success")
             {
@@ -68,11 +71,12 @@ namespace EComm.Services
                 payment.PaymentMethod = eventPayload.Data.Channel;
                 await ClearOrderItemsFromCart(payment.Order);
                 await _dbContext.SaveChangesAsync();
-                await _notificationService.NotifyUserAsync(payment.Order.UserId,
-                                                           $"Payment of {payment.AmountPaid / 100 } for your order was successfull",
-                                                           "Successful");
+                await _notificationService.NotifyUserAsync(
+                    payment.Order.UserId,
+                    $"Payment of {payment.AmountPaid / 100} for your order was successfull",
+                    "Successful"
+                );
             }
-
         }
 
         public bool VerifySignature(string request, string signature)
@@ -83,7 +87,6 @@ namespace EComm.Services
 
         private string GenerateHmacSHA512(string request, string secret)
         {
-
             byte[] secretKeyBytes = Encoding.UTF8.GetBytes(secret);
             string inputString = Convert.ToString(new JValue(request));
             byte[] inputStringBytes = Encoding.UTF8.GetBytes(inputString);
@@ -97,11 +100,13 @@ namespace EComm.Services
 
         private async Task ClearOrderItemsFromCart(Order order)
         {
-
             // loop through the order orderItems and then clear the cartItems and decrease the product quantity
             foreach (var item in order.OrderItems)
             {
-                var cartItem = await _dbContext.CartItems.Include(ci => ci.Product).Where(ci => ci.Id.Equals(item.CartItemId)).SingleOrDefaultAsync();
+                var cartItem = await _dbContext
+                    .CartItems.Include(ci => ci.Product)
+                    .Where(ci => ci.Id.Equals(item.CartItemId))
+                    .SingleOrDefaultAsync();
                 if (cartItem is null)
                 {
                     _logger.LogError("CartItem not found.");
@@ -114,7 +119,6 @@ namespace EComm.Services
 
                 // delete the cartItem
                 _dbContext.CartItems.Remove(cartItem);
-
             }
         }
 

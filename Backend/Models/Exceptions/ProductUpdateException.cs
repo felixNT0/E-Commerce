@@ -7,9 +7,7 @@ namespace EComm.Models.Exceptions
 {
     public class ProductUpdateException : Exception
     {
-        public ProductUpdateException(string message) : base(message)
-        {
-            
-        }
+        public ProductUpdateException(string message)
+            : base(message) { }
     }
 }

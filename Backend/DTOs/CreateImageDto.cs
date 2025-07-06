@@ -8,6 +8,5 @@ namespace EComm.DTOs
     public class CreateImageDto
     {
         public IFormFile Image { get; set; }
-
     }
 }

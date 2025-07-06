@@ -18,8 +18,10 @@ namespace EComm.Controllers
         private readonly INotificationService _notificationService;
         private readonly ILogger<NotificationController> _logger;
 
-        public NotificationController(INotificationService notificationService,
-                                     ILogger<NotificationController> logger)
+        public NotificationController(
+            INotificationService notificationService,
+            ILogger<NotificationController> logger
+        )
         {
             _notificationService = notificationService;
             _logger = logger;
@@ -29,7 +31,7 @@ namespace EComm.Controllers
         [HttpPost]
         public async Task<IActionResult> NotifyUser(NotifyUserDto notifyUserDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
@@ -37,12 +39,16 @@ namespace EComm.Controllers
             var userId = User.GetUserId();
             try
             {
-                await _notificationService.NotifyUserAsync(userId, notifyUserDto.Message, notifyUserDto.Status);
-                return Ok(new { Message = "User Notified"});
+                await _notificationService.NotifyUserAsync(
+                    userId,
+                    notifyUserDto.Message,
+                    notifyUserDto.Status
+                );
+                return Ok(new { Message = "User Notified" });
             }
             catch (Exception e)
             {
-                _logger.LogError($"An Error occured while trying to Notify a user: {e.Message}");        
+                _logger.LogError($"An Error occured while trying to Notify a user: {e.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -54,40 +60,57 @@ namespace EComm.Controllers
             try
             {
                 var notificationDtos = await _notificationService.getUsersNotificationAsync(userId);
-                var response = new { Count = notificationDtos.Count(), Notifications = notificationDtos };
+                var response = new
+                {
+                    Count = notificationDtos.Count(),
+                    Notifications = notificationDtos,
+                };
                 return Ok(response);
             }
             catch (Exception e)
             {
-                _logger.LogError($"An Error Occured while Trying to get the Users Notifications : {e.Message}");
+                _logger.LogError(
+                    $"An Error Occured while Trying to get the Users Notifications : {e.Message}"
+                );
                 return StatusCode(500, "Internal Server Error");
             }
         }
 
         [HttpPut("{notificationId:Guid}")]
-        public async Task<IActionResult> UpdateNotification(Guid notificationId, UpdateNotificationDto notificationDto)
+        public async Task<IActionResult> UpdateNotification(
+            Guid notificationId,
+            UpdateNotificationDto notificationDto
+        )
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            
+
             try
             {
                 var userId = User.GetUserId();
-                await _notificationService.UpdateNotificationAsync(userId, notificationId, notificationDto);
+                await _notificationService.UpdateNotificationAsync(
+                    userId,
+                    notificationId,
+                    notificationDto
+                );
                 return NoContent();
             }
             catch (NotificationNotFoundException e)
             {
-                return StatusCode(404, "Notification not Found");   
+                return StatusCode(404, "Notification not Found");
             }
             catch (Exception e)
             {
-                _logger.LogError($"An Error Occurred while trying to update the notification : {e.Message} ");                
-                return StatusCode(500, $"An Error Occurred while trying to update the notification : {e.Message} ");
+                _logger.LogError(
+                    $"An Error Occurred while trying to update the notification : {e.Message} "
+                );
+                return StatusCode(
+                    500,
+                    $"An Error Occurred while trying to update the notification : {e.Message} "
+                );
             }
-            
         }
 
         [HttpDelete("{notificationId:Guid}")]
@@ -99,16 +122,20 @@ namespace EComm.Controllers
                 await _notificationService.DeleteNotification(userId, notificationId);
                 return NoContent();
             }
-             catch (NotificationNotFoundException e)
+            catch (NotificationNotFoundException e)
             {
-                return StatusCode(404, "Notification Does not Exist");   
+                return StatusCode(404, "Notification Does not Exist");
             }
             catch (Exception e)
             {
-                _logger.LogError($"An Error Occurred while trying to Delete the notification : {e.Message} ");                
-                return StatusCode(500, $"An Error Occurred while trying to Delete the notification : {e.Message} ");
+                _logger.LogError(
+                    $"An Error Occurred while trying to Delete the notification : {e.Message} "
+                );
+                return StatusCode(
+                    500,
+                    $"An Error Occurred while trying to Delete the notification : {e.Message} "
+                );
             }
-            
         }
     }
 }

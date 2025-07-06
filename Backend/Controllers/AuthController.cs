@@ -27,7 +27,8 @@ namespace EComm.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserCreationDto userDto)
         {
-            if (!ModelState.IsValid) BadRequest();
+            if (!ModelState.IsValid)
+                BadRequest();
             try
             {
                 var result = await _authService.RegisterUser(userDto);
@@ -39,37 +40,35 @@ namespace EComm.Controllers
             }
             catch (Exception e)
             {
-
                 return StatusCode(500, e.Message);
-
             }
-
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserLoginDto loginDto)
         {
-            if (!ModelState.IsValid) BadRequest();
+            if (!ModelState.IsValid)
+                BadRequest();
             try
             {
                 var result = await _authService.LoginUser(loginDto);
-                if (result is null) return Unauthorized("Email or Password is incorrect");
+                if (result is null)
+                    return Unauthorized("Email or Password is incorrect");
                 return Ok(result);
             }
             catch (UserLoginException e)
             {
                 return StatusCode(500, e.Message);
             }
-            catch(InvalidUserCredentialsException e)
+            catch (InvalidUserCredentialsException e)
             {
                 return Unauthorized(e.Message);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.Message);
                 return StatusCode(500, e.Message);
             }
-
         }
 
         [HttpGet]
@@ -87,7 +86,7 @@ namespace EComm.Controllers
                 await _authService.DeleteUser(userId);
                 return NoContent();
             }
-            catch(UserNotFoundException e)
+            catch (UserNotFoundException e)
             {
                 _logger.LogError(e.Message);
                 return NotFound(e.Message);
@@ -95,9 +94,11 @@ namespace EComm.Controllers
             catch (Exception e)
             {
                 _logger.LogError($"An Error occurred while tying to Delete the User {e.Message}");
-                return StatusCode(500, $"An Error occurred while tying to Delete the User {e.Message}");
+                return StatusCode(
+                    500,
+                    $"An Error occurred while tying to Delete the User {e.Message}"
+                );
             }
         }
-
     }
 }
