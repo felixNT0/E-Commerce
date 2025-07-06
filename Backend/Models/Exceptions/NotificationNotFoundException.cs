@@ -7,9 +7,7 @@ namespace EComm.Models.Exceptions
 {
     public class NotificationNotFoundException : Exception
     {
-        public NotificationNotFoundException(string message) : base(message)
-        {
-            
-        }   
+        public NotificationNotFoundException(string message)
+            : base(message) { }
     }
 }

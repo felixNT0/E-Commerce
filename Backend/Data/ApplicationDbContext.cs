@@ -7,23 +7,18 @@ namespace EComm.Data;
 
 public class ApplicationDbContext : IdentityDbContext<AppUser>
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options) { }
 
-    }
-    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<AppUser>()
-            .HasIndex(u => u.Email)
-            .IsUnique();
+        builder.Entity<AppUser>().HasIndex(u => u.Email).IsUnique();
     }
 
-
     public DbSet<Product> Products { get; set; }
-    public DbSet<Image> Images { get; set; }  
+    public DbSet<Image> Images { get; set; }
 
     public DbSet<Category> Categories { get; set; }
 

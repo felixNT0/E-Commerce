@@ -7,9 +7,7 @@ namespace EComm.Models.Exceptions
 {
     public class ProductDeletionException : Exception
     {
-        public ProductDeletionException(string message): base(message)
-        {
-            
-        }   
+        public ProductDeletionException(string message)
+            : base(message) { }
     }
 }

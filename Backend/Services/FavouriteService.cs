@@ -18,24 +18,30 @@ namespace EComm.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly ILogger<FavouriteService> _logger;
 
-        public FavouriteService(ApplicationDbContext dbContext,
-                                UserManager<AppUser> userManager, 
-                                ILogger<FavouriteService> logger)
+        public FavouriteService(
+            ApplicationDbContext dbContext,
+            UserManager<AppUser> userManager,
+            ILogger<FavouriteService> logger
+        )
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _logger = logger;
-
         }
 
-        public async Task<FavouriteDto> AddToUsersFavourite(string userId, CreateFavouriteDto favouriteDto)
+        public async Task<FavouriteDto> AddToUsersFavourite(
+            string userId,
+            CreateFavouriteDto favouriteDto
+        )
         {
-            var product = await _dbContext.Products
-                                        .Include(p => p.Category)
-                                        .SingleOrDefaultAsync(p => p.Id == favouriteDto.ProductId);
+            var product = await _dbContext
+                .Products.Include(p => p.Category)
+                .SingleOrDefaultAsync(p => p.Id == favouriteDto.ProductId);
             if (product is null)
             {
-                throw new ProductNotFoundException($"The Product with the Id {favouriteDto.ProductId} Does not Exist");
+                throw new ProductNotFoundException(
+                    $"The Product with the Id {favouriteDto.ProductId} Does not Exist"
+                );
             }
             var user = await _userManager.FindByIdAsync(userId);
             if (user is null)
@@ -47,7 +53,6 @@ namespace EComm.Services
                 var favourite = new Favourite { UserId = user.Id };
                 user.Favourites = favourite;
             }
-
 
             user.Favourites.Products.Add(product);
             await _dbContext.SaveChangesAsync();
@@ -62,20 +67,19 @@ namespace EComm.Services
                     ProductName = product.Name,
                     Price = product.Price,
                     Category = product.Category.Name,
-                    ImageUrl = product.ImageUrl
-                }
+                    ImageUrl = product.ImageUrl,
+                },
             };
         }
 
         public async Task<IEnumerable<ProductDto>> GetUsersFavourites(string userId)
         {
-
-            var usersFavourites = await _dbContext.Favourites
-                                        .Where(f => f.UserId == userId)
-                                        .Include(f => f.Products)
-                                        .ThenInclude(p => p.Category)
-                                        .AsNoTracking()
-                                        .FirstOrDefaultAsync();
+            var usersFavourites = await _dbContext
+                .Favourites.Where(f => f.UserId == userId)
+                .Include(f => f.Products)
+                .ThenInclude(p => p.Category)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
             if (usersFavourites is null || usersFavourites.Products is null)
             {
                 return [];
@@ -88,18 +92,17 @@ namespace EComm.Services
                 ImageUrl = p.ImageUrl ?? "testUrl",
                 Price = p.Price,
                 Description = p.Description,
-                Category = p.Category?.Name ?? ""
+                Category = p.Category?.Name ?? "",
             });
             return favouriteProductsDto;
         }
 
-
         public async Task RemoveFavourite(string userId, Guid productId)
         {
-            var favourites = await _dbContext.Favourites
-                                        .Where(f => f.UserId == userId)
-                                        .Include(f => f.Products)
-                                        .SingleOrDefaultAsync();
+            var favourites = await _dbContext
+                .Favourites.Where(f => f.UserId == userId)
+                .Include(f => f.Products)
+                .SingleOrDefaultAsync();
             if (favourites is null)
             {
                 _logger.LogError($"The User with id {userId} does not have any favourite product ");
@@ -109,7 +112,9 @@ namespace EComm.Services
             var product = favourites.Products.Where(p => p.Id == productId).SingleOrDefault();
             if (product is null)
             {
-                _logger.LogError($"The product with id :{productId} is not in the users favourites List");
+                _logger.LogError(
+                    $"The product with id :{productId} is not in the users favourites List"
+                );
                 throw new ProductNotFoundException($"The product is not in your favourites List");
             }
             favourites.Products.Remove(product);

@@ -16,17 +16,19 @@ namespace EComm.Services
 {
     public class AuthService : IAuthService
     {
-
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IJwtTokenService _tokenService;
         private readonly ILogger _logger;
         private readonly ApplicationDbContext _dbContext;
 
-        public AuthService(UserManager<AppUser> userManager,
-                            SignInManager<AppUser> signInManager,
-                            IJwtTokenService jwtTokenService, ILogger<AuthService> logger,
-                            ApplicationDbContext dbContext)
+        public AuthService(
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
+            IJwtTokenService jwtTokenService,
+            ILogger<AuthService> logger,
+            ApplicationDbContext dbContext
+        )
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -37,13 +39,12 @@ namespace EComm.Services
 
         public async Task<UserDto?> RegisterUser(UserCreationDto userDto)
         {
-
             var user = new AppUser
             {
                 FirstName = userDto.FirstName,
                 LastName = userDto.LastName,
                 UserName = userDto.UserName,
-                Email = userDto.Email
+                Email = userDto.Email,
             };
             var createdUser = await _userManager.CreateAsync(user, userDto.Password);
             if (createdUser.Succeeded)
@@ -55,38 +56,36 @@ namespace EComm.Services
                 {
                     Id = user.Id,
                     Name = user.FirstName + " " + user.LastName,
-                    Role = userDto.Role
+                    Role = userDto.Role,
                 };
-
             }
 
             var errors = string.Join("; ", createdUser.Errors.Select(e => e.Description));
             _logger.LogError($"User Registration failed: {errors}");
             throw new UserRegistrationException($"User Registration failed: {errors}");
-
         }
 
         public async Task<LoginDto> LoginUser(UserLoginDto loginDto)
         {
-
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user is null)
             {
                 _logger.LogError("User not Found");
-                throw new UserNotFoundException($"User with Email : {loginDto.Email} Does Not Exist");
+                throw new UserNotFoundException(
+                    $"User with Email : {loginDto.Email} Does Not Exist"
+                );
             }
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            var result = await _signInManager.CheckPasswordSignInAsync(
+                user,
+                loginDto.Password,
+                false
+            );
             if (!result.Succeeded)
             {
                 _logger.LogError($"wrong Password");
                 throw new InvalidUserCredentialsException("Email or Password is incorrect");
             }
-            return new LoginDto
-            {
-                Token = await _tokenService.GenerateToken(user)
-            };
-
-
+            return new LoginDto { Token = await _tokenService.GenerateToken(user) };
         }
 
         public async Task<IEnumerable<UserDto>> GetUsers()
@@ -107,7 +106,7 @@ namespace EComm.Services
                 {
                     Id = u.Id,
                     Name = u.FirstName + " " + u.LastName,
-                    Role = userRole
+                    Role = userRole,
                 };
                 usersDto.Add(dto);
             }
@@ -117,11 +116,11 @@ namespace EComm.Services
 
         public async Task DeleteUser(string userId)
         {
-            var user = await _userManager.Users.SingleOrDefaultAsync(u=> u.Id.Equals(userId));
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id.Equals(userId));
             if (user is null)
             {
                 _logger.LogError("User not Found");
-                throw new UserNotFoundException($"User with Id : {userId} Does Not Exist");   
+                throw new UserNotFoundException($"User with Id : {userId} Does Not Exist");
             }
             _dbContext.Remove(user);
             await _dbContext.SaveChangesAsync();

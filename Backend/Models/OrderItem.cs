@@ -8,7 +8,7 @@ namespace EComm.Models
 {
     public class OrderItem
     {
-        public Guid Id { get; set; }   
+        public Guid Id { get; set; }
 
         public Guid OrderId { get; set; }
 
@@ -20,7 +20,5 @@ namespace EComm.Models
 
         [Column(TypeName = "decimal(10, 2)")]
         public decimal UnitPrice { get; set; }
-
-
     }
 }

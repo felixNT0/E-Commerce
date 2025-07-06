@@ -15,8 +15,8 @@ namespace EComm.Models
 
         [MaxLength(100)]
         public string Name { get; set; }
-        
-        [Column(TypeName="decimal(10,2)")]
+
+        [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
 
         public Image? Image { get; set; }
@@ -29,10 +29,9 @@ namespace EComm.Models
         public int Quantity { get; set; }
 
         public List<CartItem?> CartItems { get; set; }
-    
+
         public Category? Category { get; set; }
 
         public List<Favourite?> Favourites { get; set; } = [];
-
     }
 }

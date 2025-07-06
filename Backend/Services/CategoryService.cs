@@ -20,14 +20,14 @@ namespace EComm.Services
 
         public async Task<IEnumerable<CategoryDto>> GetCategoriesAsync()
         {
-            var categories =  await _dbContext.Categories.AsNoTracking().ToListAsync();
+            var categories = await _dbContext.Categories.AsNoTracking().ToListAsync();
             if (categories is null)
                 return [];
-            var categoriesDto = categories.Select( c => new CategoryDto
-                                                {   
-                                                    Id = c.Id,
-                                                    Name = c.Name
-                                                });
+            var categoriesDto = categories.Select(c => new CategoryDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+            });
             return categoriesDto;
         }
     }

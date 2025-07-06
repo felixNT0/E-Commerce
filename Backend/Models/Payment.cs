@@ -26,6 +26,5 @@ namespace EComm.Models
         public string PaymentMethod { get; set; } = string.Empty;
 
         public Order? Order { get; set; }
-
     }
 }

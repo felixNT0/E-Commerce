@@ -7,8 +7,5 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace EComm.Services
 {
-    public class NotificationHub : Hub<INotificationClient>
-    {
-        
-    }
+    public class NotificationHub : Hub<INotificationClient> { }
 }

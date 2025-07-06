@@ -6,7 +6,6 @@ namespace EComm.Shared.Enums
         Success,
         Failed,
         Cancelled,
-        PartialPaid
-
+        PartialPaid,
     }
 }

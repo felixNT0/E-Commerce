@@ -10,8 +10,7 @@ namespace EComm.Services
 {
     public class BackgroundTaskQueue : IBackgroundTaskQueue
     {
-        
-        private readonly Channel<Func<IServiceProvider, Task>> _queue; 
+        private readonly Channel<Func<IServiceProvider, Task>> _queue;
         private readonly ILogger<BackgroundTaskQueue> _logger;
 
         public BackgroundTaskQueue(ILogger<BackgroundTaskQueue> logger)
@@ -22,7 +21,7 @@ namespace EComm.Services
 
         public void Enqueue(Func<IServiceProvider, Task> item)
         {
-            if (item is null) 
+            if (item is null)
             {
                 _logger.LogError("You are trying to queue an Empty task");
                 throw new ArgumentNullException(nameof(item));
@@ -30,7 +29,9 @@ namespace EComm.Services
             _queue.Writer.TryWrite(item);
         }
 
-        public async ValueTask<Func<IServiceProvider, Task>> DequeueAsync(CancellationToken cancellationToken)
+        public async ValueTask<Func<IServiceProvider, Task>> DequeueAsync(
+            CancellationToken cancellationToken
+        )
         {
             return await _queue.Reader.ReadAsync();
         }
@@ -38,6 +39,6 @@ namespace EComm.Services
         public async ValueTask<bool> WaitForNextRead(CancellationToken token = default)
         {
             return await _queue.Reader.WaitToReadAsync(token);
-        } 
+        }
     }
 }

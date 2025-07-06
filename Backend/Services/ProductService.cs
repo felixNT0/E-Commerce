@@ -16,12 +16,15 @@ namespace EComm.Services
 {
     public class ProductService : IProductService
     {
-
         private readonly IImageService _imageService;
         private readonly ApplicationDbContext _dbContext;
         private readonly ILogger<ProductService> _logger;
 
-        public ProductService(IImageService imageService, ApplicationDbContext dbContext, ILogger<ProductService> logger)
+        public ProductService(
+            IImageService imageService,
+            ApplicationDbContext dbContext,
+            ILogger<ProductService> logger
+        )
         {
             _imageService = imageService;
             _dbContext = dbContext;
@@ -32,12 +35,16 @@ namespace EComm.Services
         {
             var image = await _imageService.CreateImageAsync(productDto.Image);
 
-            // TODO: Get the Category Specified in the DTO then add it the Product on Creation 
-            var category = await _dbContext.Categories.SingleOrDefaultAsync(c => c.Name == productDto.Category);
+            // TODO: Get the Category Specified in the DTO then add it the Product on Creation
+            var category = await _dbContext.Categories.SingleOrDefaultAsync(c =>
+                c.Name == productDto.Category
+            );
             if (category is null)
             {
                 _logger.LogError($" Category {productDto.Category} does not Exist");
-                throw new CategoryNotFoundException($" Category {productDto.Category} does not Exist");
+                throw new CategoryNotFoundException(
+                    $" Category {productDto.Category} does not Exist"
+                );
             }
 
             var product = new Product
@@ -47,12 +54,11 @@ namespace EComm.Services
                 Image = image,
                 Description = productDto.Description,
                 Category = category,
-                ImageUrl = image.Url
+                ImageUrl = image.Url,
             };
 
             await _dbContext.Products.AddAsync(product);
             await _dbContext.SaveChangesAsync();
-
 
             return new CreatedProductDto
             {
@@ -60,18 +66,23 @@ namespace EComm.Services
                 ProductName = product.Name,
                 ImageUrl = image.Url,
                 Price = product.Price,
-                Category = category.Name
+                Category = category.Name,
             };
         }
 
         public async Task<ProductDto> GetProductByIdAsync(Guid productId)
         {
             Expression<Func<Product, bool>> condition = (p) => p.Id == productId;
-            var product = await _dbContext.Products.Include(p => p.Category).AsNoTracking().SingleOrDefaultAsync(condition);
+            var product = await _dbContext
+                .Products.Include(p => p.Category)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(condition);
             if (product is null)
             {
                 _logger.LogError($"The product with id: {productId} does not Exist");
-                throw new NullReferenceException($"The product with id: {productId} does not Exist");
+                throw new NullReferenceException(
+                    $"The product with id: {productId} does not Exist"
+                );
             }
 
             return new ProductDto
@@ -81,23 +92,29 @@ namespace EComm.Services
                 ProductName = product.Name,
                 Description = product.Description,
                 Price = product.Price,
-                Category = product.Category?.Name ?? ""
+                Category = product.Category?.Name ?? "",
             };
         }
 
-        public async Task<PagedResultsDto<ProductDto>> GetProductsByCategoryAsync(int categoryId, int page, int pageSize)
+        public async Task<PagedResultsDto<ProductDto>> GetProductsByCategoryAsync(
+            int categoryId,
+            int page,
+            int pageSize
+        )
         {
-            var productCount = await _dbContext.Products.Where(p => p.CategoryId.Equals(categoryId)).CountAsync();
+            var productCount = await _dbContext
+                .Products.Where(p => p.CategoryId.Equals(categoryId))
+                .CountAsync();
             var pages = (int)Math.Ceiling(productCount / (double)pageSize);
             var skipCondition = (page - 1) * pageSize;
 
-            var products = await _dbContext.Products
-                                            .Where(p => p.CategoryId.Equals(categoryId))
-                                            .Skip(skipCondition)
-                                            .Take(pageSize)
-                                            .Include(p => p.Category)
-                                            .AsNoTracking()
-                                            .ToListAsync();
+            var products = await _dbContext
+                .Products.Where(p => p.CategoryId.Equals(categoryId))
+                .Skip(skipCondition)
+                .Take(pageSize)
+                .Include(p => p.Category)
+                .AsNoTracking()
+                .ToListAsync();
 
             if (products is null)
             {
@@ -106,7 +123,7 @@ namespace EComm.Services
                     TotalCount = productCount,
                     PageSize = pageSize,
                     PageNumber = page,
-                    Items = []
+                    Items = [],
                 };
             }
 
@@ -117,7 +134,7 @@ namespace EComm.Services
                 ImageUrl = p.ImageUrl,
                 Price = p.Price,
                 Description = p.Description,
-                Category = p.Category?.Name ?? ""
+                Category = p.Category?.Name ?? "",
             });
 
             return new PagedResultsDto<ProductDto>
@@ -126,9 +143,8 @@ namespace EComm.Services
                 PageSize = pageSize,
                 PageNumber = page,
                 Items = productsList,
-                Pages = pages
+                Pages = pages,
             };
-
         }
 
         public async Task<PagedResultsDto<ProductDto>> GetAllProductsAsync(int page, int pageSize)
@@ -136,12 +152,12 @@ namespace EComm.Services
             var productCount = await _dbContext.Products.CountAsync();
             var pages = (int)Math.Ceiling(productCount / (double)pageSize);
             var skipCondition = (page - 1) * pageSize;
-            var products = await _dbContext.Products
-                                           .Skip(skipCondition)
-                                           .Take(pageSize)
-                                           .Include(p => p.Category)
-                                           .AsNoTracking()
-                                           .ToListAsync();
+            var products = await _dbContext
+                .Products.Skip(skipCondition)
+                .Take(pageSize)
+                .Include(p => p.Category)
+                .AsNoTracking()
+                .ToListAsync();
 
             if (products is null)
             {
@@ -150,7 +166,7 @@ namespace EComm.Services
                     TotalCount = productCount,
                     PageSize = pageSize,
                     PageNumber = page,
-                    Items = []
+                    Items = [],
                 };
             }
             var productsList = products.Select(p => new ProductDto
@@ -160,7 +176,7 @@ namespace EComm.Services
                 ImageUrl = p.ImageUrl,
                 Price = p.Price,
                 Description = p.Description,
-                Category = p.Category?.Name
+                Category = p.Category?.Name,
             });
             // return productsList;
             return new PagedResultsDto<ProductDto>
@@ -169,23 +185,35 @@ namespace EComm.Services
                 PageSize = pageSize,
                 PageNumber = page,
                 Items = productsList,
-                Pages = pages
+                Pages = pages,
             };
         }
 
-        public async Task<ProductDto> UpdateProductAsync(Guid productId, UpdateProductDto productDto)
+        public async Task<ProductDto> UpdateProductAsync(
+            Guid productId,
+            UpdateProductDto productDto
+        )
         {
-            var product = await _dbContext.Products.Include(p => p.Image).Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == productId);
+            var product = await _dbContext
+                .Products.Include(p => p.Image)
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == productId);
             if (product is null)
             {
                 _logger.LogError($"Product with the id : {productId} does not Exist");
-                throw new ProductNotFoundException($"Product with the id : {productId} does not Exist");
+                throw new ProductNotFoundException(
+                    $"Product with the id : {productId} does not Exist"
+                );
             }
-            var category = await _dbContext.Categories.SingleOrDefaultAsync(c => c.Name == productDto.Category);
+            var category = await _dbContext.Categories.SingleOrDefaultAsync(c =>
+                c.Name == productDto.Category
+            );
             if (category is null)
             {
                 _logger.LogError($" Category {productDto.Category} does not Exist");
-                throw new CategoryNotFoundException($" Category {productDto.Category} does not Exist");
+                throw new CategoryNotFoundException(
+                    $" Category {productDto.Category} does not Exist"
+                );
             }
             product.Name = productDto.Name;
             product.Price = productDto.Price;
@@ -204,38 +232,43 @@ namespace EComm.Services
                     else
                     {
                         _logger.LogError($"The Image file Path does not exist : {oldImagePath}");
-                        throw new ProductUpdateException($"The Image file Path does not exist : {oldImagePath}");
+                        throw new ProductUpdateException(
+                            $"The Image file Path does not exist : {oldImagePath}"
+                        );
                     }
 
                     _dbContext.Images.Remove(product.Image);
-
                 }
 
                 var newImage = await _imageService.CreateImageAsync(productDto.Image);
                 product.Image = newImage;
                 product.ImageUrl = newImage.Url;
-
             }
             await _dbContext.SaveChangesAsync();
-            return new ProductDto { Id = product.Id, ProductName = product.Name, Price = product.Price, Description = product.Description, ImageUrl = product.ImageUrl };
+            return new ProductDto
+            {
+                Id = product.Id,
+                ProductName = product.Name,
+                Price = product.Price,
+                Description = product.Description,
+                ImageUrl = product.ImageUrl,
+            };
         }
 
         public async Task<PagedResultsDto<ProductDto>> SearchProducts(ProductSearchDto searchDto)
         {
-
             var query = _dbContext.Products.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchDto.Query))
             {
                 var lowered = searchDto.Query.ToLower();
                 query = query.Where(p =>
-                    p.Name.ToLower().Contains(lowered) ||
-                    p.Description.ToLower().Contains(lowered));
+                    p.Name.ToLower().Contains(lowered) || p.Description.ToLower().Contains(lowered)
+                );
             }
 
             if (searchDto.MinPrice.HasValue)
-                query = query.Where(p => p.Price >= searchDto.MinPrice.Value)
-                            .OrderBy(p=>p.Price);
+                query = query.Where(p => p.Price >= searchDto.MinPrice.Value).OrderBy(p => p.Price);
 
             if (searchDto.MaxPrice.HasValue)
                 query = query.Where(p => p.Price <= searchDto.MaxPrice.Value);
@@ -251,7 +284,7 @@ namespace EComm.Services
                     TotalCount = 0,
                     PageSize = searchDto.PageSize,
                     PageNumber = searchDto.Page,
-                    Items = []
+                    Items = [],
                 };
             }
             var pages = (int)Math.Ceiling(count / (double)searchDto.PageSize);
@@ -263,7 +296,7 @@ namespace EComm.Services
                 ImageUrl = p.ImageUrl,
                 Price = p.Price,
                 Description = p.Description,
-                Category = p.Category?.Name
+                Category = p.Category?.Name,
             });
 
             return new PagedResultsDto<ProductDto>
@@ -272,14 +305,17 @@ namespace EComm.Services
                 PageSize = searchDto.PageSize,
                 Items = productsList,
                 TotalCount = count,
-                Pages = pages
+                Pages = pages,
             };
         }
 
         public async Task DeleteProductAsync(Guid id)
         {
             Expression<Func<Product, bool>> condition = (p) => p.Id == id;
-            var product = await _dbContext.Products.Include(p => p.Image).Include(p => p.Category).SingleOrDefaultAsync(condition);
+            var product = await _dbContext
+                .Products.Include(p => p.Image)
+                .Include(p => p.Category)
+                .SingleOrDefaultAsync(condition);
             if (product is null)
             {
                 _logger.LogError($"The product with id: {id} does not Exist");
@@ -295,7 +331,9 @@ namespace EComm.Services
                 else
                 {
                     _logger.LogError($"The Image file Path does not exist : {imagePath}");
-                    throw new ProductDeletionException($"The Image file Path does not exist : {imagePath}");
+                    throw new ProductDeletionException(
+                        $"The Image file Path does not exist : {imagePath}"
+                    );
                 }
             }
             _dbContext.Remove(product);
