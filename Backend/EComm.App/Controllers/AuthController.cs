@@ -27,7 +27,7 @@ namespace EComm.App.Controllers
         public async Task<IActionResult> Register(UserCreationDto userDto)
         {
             if (!ModelState.IsValid)
-                BadRequest();
+                return BadRequest(ModelState);
             try
             {
                 var result = await _authService.RegisterUser(userDto);
@@ -47,26 +47,26 @@ namespace EComm.App.Controllers
         public async Task<IActionResult> Login(UserLoginDto loginDto)
         {
             if (!ModelState.IsValid)
-                BadRequest();
+                return BadRequest(ModelState);
             try
             {
                 var result = await _authService.LoginUser(loginDto);
-                if (result is null)
-                    return Unauthorized("Email or Password is incorrect");
                 return Ok(result);
-            }
-            catch (UserLoginException e)
-            {
-                return StatusCode(500, e.Message);
             }
             catch (InvalidUserCredentialsException e)
             {
+                _logger.LogWarning(e.Message);
                 return Unauthorized(e.Message);
+            }
+            catch (UserNotFoundException e)
+            {
+                _logger.LogInformation(e.Message);
+                return NotFound(e.Message);
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return StatusCode(500, e.Message);
+                return Problem(e.Message);
             }
         }
 
