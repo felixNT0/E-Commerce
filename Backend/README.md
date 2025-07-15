@@ -93,24 +93,32 @@ The backend project is organized by feature and responsibility to maintain a cle
 ```
 Backend/
 │
-├── Controllers/              # API endpoints
-├── Contracts/                # Request/response contracts and interfaces
-├── Data/                     # Database context and seed data
-├── DTOs/                     # Data Transfer Objects for validation and response shaping
-├── Extensions/               # Extension methods for service configuration and utilities
-├── githooks/                 # This folder contains all the git hooks for the this project
-├── https/                    # Local dev certificates or related HTTPS configs
-├── images/                   # The folder contains the images of the server
-├── Migrations/               # EF Core migration files
-├── Models/                   # Entity models representing database tables
-├── Policies/                 # Authorization policies
-├── Services/                 # Business logic and service layer
-├── Shared/                   # Common logic/utilities reused across layers
-├── appsettings.json          # Default configuration
-├── appsettings.Development.json # Local environment-specific config
-├── EComm.csproj              # Project file
-├── Dockerfile                # Container configuration
-└── README.md                 # Project documentation
+├── EComm.App/                   # Main ASP.NET Core Web API application
+│   ├── Controllers/             # API endpoints
+│   ├── Contracts/               # Request/response contracts and interfaces
+│   ├── Data/                    # Database context and seed data
+│   ├── DTOs/                    # Data Transfer Objects for validation and response shaping
+│   ├── Extensions/              # Extension methods for service configuration and utilities
+│   ├── https/                   # Local dev certificates or related HTTPS configs
+│   ├── Images/                  # Contains server-related images
+│   ├── Migrations/              # EF Core migration files
+│   ├── Models/                  # Entity models representing database tables
+│   ├── Policies/                # Authorization policies
+│   ├── Services/                # Business logic and service layer
+│   ├── Shared/                  # Common logic/utilities reused across layers
+│   ├── appsettings.json         # Default configuration
+│   ├── appsettings.Development.json # Local environment-specific config
+│   └── EComm.App.csproj         # Project file for the application
+│
+├── EComm.Tests/                 # xUnit test project
+│   ├── Controllers/             # Unit tests for API controllers
+│   ├── Services/                # Unit tests for service layer
+│   └── EComm.Tests.csproj       # Project file for the test project
+│
+├── githooks/                    # Custom Git hooks used by the project
+├── Dockerfile                   # Docker build definition
+├── Backend.sln                  # Solution file referencing both projects
+└── README.md                    # Project documentation
 
 ```
 

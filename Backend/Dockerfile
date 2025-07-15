@@ -1,34 +1,27 @@
-# Use the official .NET SDK image to build the app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# Copy csproj and restore as distinct layers
-COPY *.sln .
-COPY *.csproj ./
-RUN dotnet restore
+# Copy solution and project files
+COPY ./Backend.sln .
+COPY ./EComm.App/EComm.App.csproj ./EComm.App/
+RUN dotnet restore ./EComm.App/EComm.App.csproj
 
-# Copy the rest of the code
-COPY . ./
-COPY ./https/aspnetapp.pfx ./https/aspnetapp.pfx
-WORKDIR /app
+# Copy the full app source
+COPY ./EComm.App ./EComm.App
+COPY ./EComm.App/https/aspnetapp.pfx ./EComm.App/https/aspnetapp.pfx
 
-# Build the app
-RUN dotnet publish -c Release -o out
+WORKDIR /src/EComm.App
+RUN dotnet publish -c Release -o /app/out
 
-# Use the ASP.NET runtime image
+# Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
+
 COPY --from=build /app/out ./
 
-# Expose port
-# EXPOSE 5280 
-# EXPOSE 5443
-# ENV ASPNETCORE_URLS=https://+:5443;http://+:5280
-
-# ports for Render hosting
+# Expose port for Render (or local development)
 EXPOSE 10000
 ENV ASPNETCORE_URLS=http://+:10000
 
-
-# Set the entry point
-ENTRYPOINT ["dotnet", "EComm.dll"]
+# Entry point
+ENTRYPOINT ["dotnet", "EComm.App.dll"]
