@@ -1,11 +1,15 @@
 "use client";
+import ProfileCard from "@/component/card";
+import UserDashboard from "@/component/userDashboard";
 import Header from "@/layout/header";
+import { FaStar } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
 import {
   IoCalendarOutline,
   IoLocationOutline,
   IoMailOutline,
 } from "react-icons/io5";
+import { PiMedal } from "react-icons/pi";
 interface ProfileData {
   username: string;
   firstName: string;
@@ -16,6 +20,39 @@ interface ProfileData {
   photo?: string;
   coverPhoto?: string;
 }
+
+const recentOrders = [
+  {
+    id: "ORD-123",
+    image: "/laptop.jpg",
+    items: "MacBook Pro",
+    status: "Delivered" as const,
+    date: "2025-06-26",
+    amount: "$2,399",
+  },
+];
+
+const wishlistItems = [
+  {
+    id: "ITEM-1",
+    name: "iPhone 15 Pro",
+    image: "/iphone.jpg",
+    price: "$1,099",
+    originalPrice: "$1,199",
+    inStock: true,
+  },
+];
+
+const recentReviews = [
+  {
+    id: "REV-1",
+    product: "AirPods Max",
+    rating: 5,
+    date: "2025-06-20",
+    review: "Fantastic sound quality. Worth every penny!",
+    helpful: 12,
+  },
+];
 
 interface ProfileDisplayProps {
   profileData: ProfileData;
@@ -29,13 +66,15 @@ export default function ProfileDisplay({
   const fullName = `${profileData.firstName} ${profileData.lastName}`;
 
   return (
-    <div className="dark:bg-gray-900 h-screen dark:text-white">
+    <div className="dark:bg-gray-900 min-h-full dark:text-white">
+      {/* Header */}
       <Header />
-      <div className="max-w-2xl mx-auto p-6">
-        <div className="w-full border p-3">
-          <div className="relative pb-0 ">
+
+      <div className="max-w-6xl mx-auto p-6">
+        <div className="w-full ">
+          <div className="relative">
             {/* Cover Image */}
-            <div className="h-32 bg-[#277b7c] rounded-t-lg ">
+            <div className="h-48 bg-gradient-to-r from-[#216869] to-[#49A078] rounded-t-lg">
               {profileData.coverPhoto && (
                 <img
                   src={profileData.coverPhoto || "/placeholder.svg"}
@@ -45,122 +84,102 @@ export default function ProfileDisplay({
               )}
             </div>
 
-            {/* Profile Picture and Edit Button */}
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mt-2 relative z-10 gap-4 sm:gap-0 ">
-              <div className="flex items-end space-x-4 ">
-                <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg bg-gray-200 flex items-center justify-center overflow-hidden">
-                  {profileData.photo ? (
-                    <img
-                      src={profileData.photo || "/placeholder.svg"}
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <svg
-                      className="w-12 h-12 text-gray-400"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                        clipRule="evenodd"
+            {/* Profile Content */}
+            <div className="px-6 pb-6 border border-gray-400 dark:bg-gray-800 rounded-b-lg">
+              {/* Profile Picture and Edit Button */}
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between -mt-12 relative z-10 gap-4 sm:gap-0">
+                <div className="flex items-end space-x-6">
+                  <div className="w-32 h-32 rounded-full border-4 border-white shadow-xl bg-gray-200 flex items-center justify-center overflow-hidden">
+                    {profileData.photo ? (
+                      <img
+                        src={profileData.photo || "/placeholder.svg"}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
                       />
-                    </svg>
-                  )}
+                    ) : (
+                      <svg
+                        className="w-16 h-16 text-gray-400"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </div>
+
+                  <div className="pb-4">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                      {fullName}
+                    </h1>
+                    <p className="text-lg text-gray-600 dark:text-gray-400 mb-2">
+                      @{profileData.username}
+                    </p>
+                    <div className="flex items-center space-x-3">
+                      <div className="text-[12px] flex items-center space-x-1 gap-1 border bg-zinc-400 text-white py-[2px] px-2 rounded-full font-medium">
+                        <PiMedal />
+                        Gold Member
+                      </div>
+                      <div className="text-[12px] flex items-center space-x-1 gap-1 border py-[2px] px-2 rounded-full">
+                        <FaStar className="inline-block w-4 h-4 text-yellow-500" />
+                        VIP Customer
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="pb-2">
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {fullName}
-                  </h1>
-                  <p className="text-gray-600">@{profileData.username}</p>
+
+                <button
+                  className="mb-2 border py-2 px-3 text-sm rounded-md font-semibold flex items-center justify-center gap-1 sm:text-[12px]  "
+                  onClick={onEdit}
+                >
+                  <FiEdit className="w-4 h-4 font-semibold" />
+                  Edit Profile
+                </button>
+              </div>
+
+              {/* Bio and Contact Info */}
+              <div className="mt-6 space-y-6">
+                {profileData.about && (
+                  <div>
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
+                      {profileData.about}
+                    </p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
+                    <IoMailOutline className="w-5 h-5" />
+                    <span className="font-medium">{profileData.email}</span>
+                  </div>
+                  <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
+                    <IoLocationOutline className="w-5 h-5" />
+                    <span className="font-medium">{profileData.country}</span>
+                  </div>
+                  <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
+                    <IoCalendarOutline className="w-5 h-5" />
+                    <span className="font-medium">Joined March 2020</span>
+                  </div>
                 </div>
               </div>
-              <button
-                //   variant="outline"
-                //   size="sm"
-                className="mb-2 border py-2 px-3 text-sm rounded-md font-semibold flex items-center justify-center gap-1 sm:text-[12px]  "
-                onClick={onEdit}
-              >
-                <FiEdit className="w-4 h-4 font-semibold" />
-                Edit Profile
-              </button>
             </div>
           </div>
 
-          <div className="pt-6">
-            <div className="space-y-4">
-              {/* Bio Section */}
-              {profileData.about && (
-                <div>
-                  <p className="text-gray-700 leading-relaxed dark:text-gray-400">
-                    {profileData.about}
-                  </p>
-                </div>
-              )}
+          {/* Stats Cards */}
+          <div className="pt-9">
+            <ProfileCard />
+          </div>
 
-              {/* Status Badges */}
-              <div className="flex flex-wrap gap-2">
-                {/* <Badge variant="secondary">Available for work</Badge>
-              <Badge variant="outline">Remote</Badge>
-              <Badge variant="outline">Full-time</Badge> */}
-              </div>
-
-              {/* <Separator /> */}
-
-              {/* Contact Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3 text-gray-600">
-                    <IoMailOutline className="w-4 h-4" />
-                    <span className="text-sm">{profileData.email}</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-gray-600">
-                    <IoLocationOutline className="w-4 h-4" />
-                    <span className="text-sm">{profileData.country}</span>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3 text-gray-600">
-                    <IoCalendarOutline className="w-4 h-4" />
-                    <span className="text-sm">Joined March 2020</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* <Separator /> */}
-
-              {/* Skills Section */}
-              {/* <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Skills</h3>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary">UI/UX Design</Badge>
-                <Badge variant="secondary">Figma</Badge>
-                <Badge variant="secondary">Prototyping</Badge>
-                <Badge variant="secondary">User Research</Badge>
-                <Badge variant="secondary">Design Systems</Badge>
-                <Badge variant="secondary">Adobe Creative Suite</Badge>
-              </div>
-            </div> */}
-
-              {/* <Separator /> */}
-
-              {/* Stats Section */}
-              {/* <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">127</div>
-                  <div className="text-sm text-gray-600">Projects</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">2.4k</div>
-                  <div className="text-sm text-gray-600">Followers</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">892</div>
-                  <div className="text-sm text-gray-600">Following</div>
-                </div>
-              </div> */}
-            </div>
+          {/* User Dashboard */}
+          <div className="pt-9">
+            <UserDashboard
+              recentOrders={recentOrders}
+              wishlistItems={wishlistItems}
+              recentReviews={recentReviews}
+            />
           </div>
         </div>
       </div>
