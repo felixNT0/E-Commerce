@@ -157,7 +157,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins("http://localhost:3000", "https://fkt-e-commerce.vercel.app/")
+                .WithOrigins("http://localhost:3000", "https://fkt-e-commerce.vercel.app")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials()
