@@ -1,4 +1,9 @@
-import { LoginPayload, RegisterPayload } from "@/types/auth";
+import {
+  LoginPayload,
+  LoginResponse,
+  RegisterPayload,
+  RegisterResponse,
+} from "@/types/auth";
 import { mutator } from "@/util/axios";
 import { endpoints } from "@/util/endpoints";
 import { queryKeys } from "@/util/react-query";
@@ -8,12 +13,12 @@ import { useMemo } from "react";
 export function useLogin() {
   const queryClient = useQueryClient();
   const { data, isPending, mutateAsync, error, isError } = useMutation<
-    Response,
+    LoginResponse,
     any,
     LoginPayload
   >({
     mutationFn: async (body: LoginPayload) =>
-      await mutator<Response>({
+      await mutator<LoginResponse>({
         url: endpoints.auth.login,
         data: body,
         method: "POST",
@@ -40,12 +45,12 @@ export function useRegister() {
   const queryClient = useQueryClient();
 
   const { data, isPending, mutateAsync } = useMutation<
-    Response,
+    RegisterResponse,
     any,
     RegisterPayload
   >({
     mutationFn: async (body: RegisterPayload) =>
-      await mutator({
+      await mutator<RegisterResponse>({
         url: endpoints.auth.register,
         data: body,
         method: "POST",

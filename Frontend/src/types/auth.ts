@@ -1,6 +1,11 @@
 export type LoginPayload = {
-  userName: string;
+  email: string;
   password: string;
+};
+
+// ADDED CODE (matches backend response structure):
+export type LoginResponse = {
+  token: string;
 };
 
 export type RegisterPayload = {
@@ -8,6 +13,11 @@ export type RegisterPayload = {
   password: string;
   firstName: string;
   lastName: string;
-  displayName: string;
-  dateOfBirth: number;
+  userName: string;
+  dateOfBirth: string;
+  role?: string;
+};
+
+export type RegisterResponse = {
+  token: string;
 };

@@ -1,7 +1,7 @@
 export const endpoints = {
   auth: {
-    register: "/auth/register",
-    login: "/auth/users/login",
-    // logout: "/auth/logout",
+    register: "auth/users/register",
+
+    login: "auth/users/login",
   },
 };

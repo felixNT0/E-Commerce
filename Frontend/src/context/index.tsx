@@ -1,6 +1,7 @@
 "use client";
 
 import { ProductItem } from "@/types/product";
+import { IUser } from "@/types/user";
 import {
   generateUniqueId,
   getStoredJSONValuesFromLocalStorage,
@@ -47,14 +48,16 @@ interface CategoryOption {
 }
 
 const initialUser: IUser = {
+  id: "",
   isLoggedIn: false,
-  first_name: "",
-  last_name: "",
-  display_name: "",
-  date_of_birth: "",
+  firstName: "",
+  lastName: "",
+  userName: "",
   email: "",
   password: "",
-  password_confirm: "",
+  passwordConfirm: "",
+  role: "",
+  dateOfBirth: "",
 };
 
 interface AppContextType {

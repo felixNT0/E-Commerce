@@ -13,7 +13,7 @@ export default function ClientOnly({
     setClientOnly(true);
   }, []);
 
-  if (!setClientOnly) return null; // Prevents SSR rendering until mounted
+  if (!clientOnly) return null; // Prevents SSR rendering until mounted
 
   return <>{children}</>;
 }

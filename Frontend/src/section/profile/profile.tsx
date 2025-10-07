@@ -4,14 +4,11 @@ import UserDashboard from "@/component/userDashboard";
 import Header from "@/layout/header";
 import { FaStar } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
-import {
-  IoCalendarOutline,
-  IoLocationOutline,
-  IoMailOutline,
-} from "react-icons/io5";
+import { HiOutlineMail } from "react-icons/hi";
+import { IoCalendarOutline, IoLocationOutline } from "react-icons/io5";
 import { PiMedal } from "react-icons/pi";
 interface ProfileData {
-  username: string;
+  userName: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -85,11 +82,11 @@ export default function ProfileDisplay({
             </div>
 
             {/* Profile Content */}
-            <div className="px-6 pb-6 border border-gray-400 dark:bg-gray-800 rounded-b-lg">
+            <div className="px-6 pb-6 border border-gray-400 dark:bg-gray-800 rounded-b-lg w-full">
               {/* Profile Picture and Edit Button */}
-              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between -mt-12 relative z-10 gap-4 sm:gap-0">
-                <div className="flex items-end space-x-6">
-                  <div className="w-32 h-32 rounded-full border-4 border-white shadow-xl bg-gray-200 flex items-center justify-center overflow-hidden">
+              <div className=" w-full flex flex-col sm:flex-row sm:items-end sm:justify-between -mt-12 relative z-10 gap-4 sm:gap-0">
+                <div className="flex flex-col sm:flex-row sm:gap-2 items-center sm:space-x-6">
+                  <div className="w-24 h-24 sm:w-40 sm:h-36 rounded-full border-4 border-white shadow-xl bg-gray-200 flex items-center justify-center  overflow-hidden">
                     {profileData.photo ? (
                       <img
                         src={profileData.photo || "/placeholder.svg"}
@@ -98,7 +95,7 @@ export default function ProfileDisplay({
                       />
                     ) : (
                       <svg
-                        className="w-16 h-16 text-gray-400"
+                        className="w-24 h-24 sm:w-40 sm:h-36 text-gray-400"
                         viewBox="0 0 24 24"
                         fill="currentColor"
                       >
@@ -111,21 +108,21 @@ export default function ProfileDisplay({
                     )}
                   </div>
 
-                  <div className="pb-4">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                  <div className="pb-4 w-full">
+                    <h1 className="text-lg sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">
                       {fullName}
                     </h1>
-                    <p className="text-lg text-gray-600 dark:text-gray-400 mb-2">
-                      @{profileData.username}
+                    <p className="text-sm sm:text-lg text-gray-600 dark:text-gray-400 mb-2">
+                      @{profileData.userName}
                     </p>
-                    <div className="flex items-center space-x-3">
-                      <div className="text-[12px] flex items-center space-x-1 gap-1 border bg-zinc-400 text-white py-[2px] px-2 rounded-full font-medium">
-                        <PiMedal />
-                        Gold Member
+                    <div className="flex flex-col gap-2 justify-center sm:flex-row items-center sm:space-x-3 w-full ">
+                      <div className="w-full flex justify-center items-center gap-1 border bg-zinc-400 text-white py-[2px] px-2 rounded-full font-medium">
+                        <PiMedal className="text-sm" />
+                        <p className="text-[12px]">Gold Member</p>
                       </div>
-                      <div className="text-[12px] flex items-center space-x-1 gap-1 border py-[2px] px-2 rounded-full">
-                        <FaStar className="inline-block w-4 h-4 text-yellow-500" />
-                        VIP Customer
+                      <div className="w-full flex justify-center items-center gap-1 border py-[2px]  rounded-full">
+                        <FaStar className="text-sm text-yellow-500" />
+                        <p className="text-[12px]">Vip Customer</p>
                       </div>
                     </div>
                   </div>
@@ -144,24 +141,30 @@ export default function ProfileDisplay({
               <div className="mt-6 space-y-6">
                 {profileData.about && (
                   <div>
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-base sm:text-lg">
                       {profileData.about}
                     </p>
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                    <IoMailOutline className="w-5 h-5" />
-                    <span className="font-medium">{profileData.email}</span>
+                    <HiOutlineMail className="w-5 h-5" />
+                    <span className="font-medium text-[14px] sm:text-sm ">
+                      {profileData.email}
+                    </span>
                   </div>
                   <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                     <IoLocationOutline className="w-5 h-5" />
-                    <span className="font-medium">{profileData.country}</span>
+                    <span className="font-medium text-[14px] sm:text-sm ">
+                      {profileData.country}
+                    </span>
                   </div>
                   <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                     <IoCalendarOutline className="w-5 h-5" />
-                    <span className="font-medium">Joined March 2020</span>
+                    <span className="font-medium text-[14px] sm:text-sm ">
+                      Joined March 2020
+                    </span>
                   </div>
                 </div>
               </div>

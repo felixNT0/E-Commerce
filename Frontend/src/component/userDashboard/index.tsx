@@ -61,7 +61,7 @@ const UserDashboard: React.FC<DashboardProps> = ({
           <button
             key={tab}
             onClick={() => setActiveTab(tab as any)}
-            className={`text-sm font-medium p-2 rounded-lg hover:underline ${
+            className={`text-[12px] sm:text-sm font-medium p-2 rounded-lg hover:underline ${
               activeTab === tab ? "bg-white text-gray-700 font-bold" : ""
             }`}
           >
@@ -79,27 +79,28 @@ const UserDashboard: React.FC<DashboardProps> = ({
       {/* Orders */}
       {activeTab === "orders" && (
         <section className="border border-gray-400 rounded-lg p-6 space-y-4">
-          <h2 className="text-xl font-semibold">Recent Orders</h2>
+          <h2 className="text-base sm:text-xl font-semibold">Recent Orders</h2>
           <p className="text-base">
             Your latest purchases and their current status
           </p>
           {recentOrders.map((order) => (
             <div
               key={order.id}
-              className="flex items-center space-x-4 p-4 border border-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border border-gray-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             >
               <img
                 src={order.image || "/placeholder.svg"}
                 alt={order.items}
-                className="w-16 h-16 rounded-lg object-cover"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover mx-auto sm:mx-0"
               />
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
+
+              <div className="flex-1 space-y-1 text-center sm:text-left">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                  <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white break-all">
                     {order.id}
                   </h3>
                   <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
+                    className={`px-2 py-1 rounded text-xs font-medium w-max mx-auto sm:mx-0 ${
                       order.status === "Delivered"
                         ? "bg-green-100 text-green-800"
                         : order.status === "Shipped"
@@ -110,17 +111,20 @@ const UserDashboard: React.FC<DashboardProps> = ({
                     {order.status}
                   </span>
                 </div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+
+                <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
                   {order.items}
                 </p>
-                <div className="flex items-center justify-between">
+
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                   <p className="text-xs text-gray-500">{order.date}</p>
-                  <p className="font-bold text-gray-900 dark:text-white">
+                  <p className="font-bold text-sm text-gray-900 dark:text-white">
                     {order.amount}
                   </p>
                 </div>
               </div>
-              <button className="border px-3 py-1 text-sm rounded flex items-center">
+
+              <button className="border px-4 py-2 text-sm rounded flex items-center justify-center sm:self-auto self-center">
                 <FaTruck className="w-4 h-4 mr-2" />
                 Track
               </button>
@@ -132,7 +136,7 @@ const UserDashboard: React.FC<DashboardProps> = ({
       {/* Wishlist */}
       {activeTab === "wishlist" && (
         <section className="border border-gray-400 rounded-lg p-6 space-y-4">
-          <h2 className="text-xl font-semibold">My Wishlist</h2>
+          <h2 className="text-base sm:text-xl font-semibold">My Wishlist</h2>
           <p className="text-base">Items you've saved for later</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {wishlistItems.map((item) => (
@@ -182,7 +186,7 @@ const UserDashboard: React.FC<DashboardProps> = ({
       {/* Reviews */}
       {activeTab === "reviews" && (
         <section className="border border-gray-400 rounded-lg p-6 space-y-6">
-          <h2 className="text-xl font-semibold">My Reviews</h2>
+          <h2 className="text-base sm:text-xl font-semibold">My Reviews</h2>
           <p className="text-base">
             Reviews you've written for purchased items
           </p>
@@ -191,7 +195,7 @@ const UserDashboard: React.FC<DashboardProps> = ({
               key={review.id}
               className="border border-gray-400 rounded-lg p-6 space-y-4"
             >
-              <div className="flex items-start justify-between">
+              <div className="flex flex-col gap-2 sm:flext-row items-start justify-between">
                 <div className="space-y-2">
                   <h3 className="font-semibold text-gray-900 dark:text-white">
                     {review.product}
@@ -231,7 +235,7 @@ const UserDashboard: React.FC<DashboardProps> = ({
       {/* Activity */}
       {activeTab === "activity" && (
         <section className="border border-gray-400 rounded-lg p-6 space-y-4">
-          <h2 className="text-xl font-semibold">Recent Activity</h2>
+          <h2 className="text-sm sm:text-xl font-semibold">Recent Activity</h2>
           <p className="text-base">
             Your shopping activity and account updates
           </p>

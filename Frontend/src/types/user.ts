@@ -1,10 +1,12 @@
-type IUser = {
+export type IUser = {
+  id: string;
   isLoggedIn?: false;
-  first_name: string;
-  last_name: string;
-  display_name: string;
-  date_of_birth: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
   email: string;
   password: string;
-  password_confirm: string;
+  passwordConfirm: string;
+  role?: string;
+  dateOfBirth: string;
 };

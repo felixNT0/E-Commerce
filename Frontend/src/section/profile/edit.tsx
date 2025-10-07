@@ -20,7 +20,7 @@ const validationSchema = Yup.object().shape({
 
 type SettingsProps = {
   initialData: {
-    username: string;
+    userName: string;
     firstName: string;
     lastName: string;
     email: string;

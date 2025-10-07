@@ -1,4 +1,5 @@
 "use client";
+import { useRegister } from "@/api/auth"; // ✅ import your custom register hook
 import Button from "@/component/button";
 import IconButton from "@/component/icon-button";
 import Input from "@/component/input";
@@ -13,6 +14,7 @@ import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import * as Yup from "yup";
 
+// ✅ Validation schema
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
@@ -21,7 +23,7 @@ const validationSchema = Yup.object().shape({
     .matches(/[a-z]/, "Password must contain a lowercase letter")
     .matches(/[0-9]/, "Password must contain a number")
     .matches(
-      /[!@#$%^&*(),.?":{}|<>]/,
+      /[!@#$%^&*(),.?\":{}|<>]/,
       "Password must contain a special character"
     )
     .required("Password is required"),
@@ -32,11 +34,15 @@ const validationSchema = Yup.object().shape({
   last_name: Yup.string().required("Last Name is required"),
 });
 
+// ✅ Main Register Component
 const Register = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { register, registerLoading } = useRegister();
 
-  const initialValues: IUser = {
+  const initialValues = {
     first_name: "",
     last_name: "",
     display_name: "",
@@ -46,23 +52,41 @@ const Register = () => {
     password_confirm: "",
   };
 
-  const { enqueueSnackbar } = useSnackbar();
-  const router = useRouter();
-
   const handleSubmit = async (values: any) => {
     try {
       setIsLoading(true);
 
+      // Build the payload according to your backend's expected structure
+      const payload = {
+        userName: values.display_name,
+        firstName: values.first_name,
+        lastName: values.last_name,
+        email: values.email,
+        password: values.password,
+        dateOfBirth: values.date_of_birth,
+        role: "Customer", // ✅ required by backend
+      };
+
+      // Call API via your React Query mutation hook
+      await register(payload);
+
+      enqueueSnackbar("Registration successful!", { variant: "success" });
+
+      // Optionally store user locally (optional)
       await setStoredJSONValuesToLocalStorage("currentUser", {
-        ...values,
-        isLoggedIn: true,
+        ...payload,
+        isLoggedIn: false, // not logged in yet
       });
-      setTimeout(() => {
-        router.push("/login");
-        setIsLoading(false);
-      }, 5000);
-    } catch (e) {
-      enqueueSnackbar("An error occurred", { variant: "error" });
+
+      // Redirect to login
+      router.push("/login");
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      enqueueSnackbar(error.message || "An error occurred", {
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -70,7 +94,7 @@ const Register = () => {
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
   return (
-    <div className="flex items-center justify-center h-screen  max-sm:px-4 bg-[#1f2421] text-white">
+    <div className="flex items-center justify-center h-screen max-sm:px-4 bg-[#1f2421] text-white">
       <motion.div
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -80,6 +104,7 @@ const Register = () => {
         <h2 className="text-2xl font-bold text-center text-white mb-6">
           Register
         </h2>
+
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -89,107 +114,100 @@ const Register = () => {
             const { getFieldProps, isValid, values, errors, dirty } = formik;
             return (
               <Form>
+                {/* STEP 1 */}
                 {currentStep === 1 && (
-                  <motion.div className="space-y-6 placeholder:text-gray-100 w-full">
+                  <motion.div className="space-y-6 w-full">
                     <Input
                       label="Email"
-                      placeholder="email"
+                      placeholder="Enter your email"
                       {...getFieldProps("email")}
                       {...formikHelper(formik, "email")}
-                      className=" placeholder:text-sm "
                     />
 
                     <Input
                       label="Password"
                       type="password"
                       autoComplete="password"
-                      placeholder="Password"
+                      placeholder="Enter your password"
                       {...getFieldProps("password")}
-                      className=" placeholder:text-sm "
                       {...formikHelper(formik, "password")}
                     />
+
                     <PasswordChecker name="password" />
+
                     <Input
                       label="Confirm Password"
                       type="password"
                       autoComplete="password"
-                      placeholder="Confirm Password"
+                      placeholder="Confirm your password"
                       {...getFieldProps("password_confirm")}
-                      className=" placeholder:text-sm "
                       {...formikHelper(formik, "password_confirm")}
                     />
 
                     <Button
-                      type={"button"}
+                      type="button"
                       onClick={nextStep}
                       disabled={
                         !values.email ||
                         !values.password ||
                         !values.password_confirm ||
-                        !!errors?.password_confirm ||
+                        !!errors.password_confirm ||
                         values.password.length < 8 ||
                         values.password_confirm.length < 8
                       }
                     >
-                      {"Continue"}
+                      Continue
                     </Button>
                   </motion.div>
                 )}
+
+                {/* STEP 2 */}
                 {currentStep === 2 && (
-                  <motion.div className="space-y-6 placeholder:text-gray-100 w-full">
+                  <motion.div className="space-y-6 w-full">
                     <div className="flex items-center gap-[14px]">
                       <div className="w-full">
                         <Input
-                          label="First name"
+                          label="First Name"
                           placeholder="Enter first name"
                           {...getFieldProps("first_name")}
                           {...formikHelper(formik, "first_name")}
-                          className=" placeholder:text-sm "
                         />
                       </div>
                       <div className="w-full">
                         <Input
-                          label="Last name"
+                          label="Last Name"
                           placeholder="Enter last name"
                           {...getFieldProps("last_name")}
                           {...formikHelper(formik, "last_name")}
-                          className=" placeholder:text-sm "
                         />
                       </div>
                     </div>
 
                     <Input
-                      label="Display name"
-                      placeholder="Enter display name"
+                      label="Display Name"
+                      placeholder="Enter display name (optional)"
                       {...getFieldProps("display_name")}
                       {...formikHelper(formik, "display_name")}
-                      className=" placeholder:text-sm "
                     />
 
                     <Input
                       type="date"
-                      label="Date of birth"
-                      autoComplete="date_of_birth"
+                      label="Date of Birth"
                       placeholder="DD/MM/YYYY"
                       {...getFieldProps("date_of_birth")}
-                      className=" placeholder:text-sm placeholder:!text-gray-300 cursor-text"
                       {...formikHelper(formik, "date_of_birth")}
                     />
 
                     <div className="flex gap-4 items-center">
-                      <IconButton
-                        type={"button"}
-                        onClick={prevStep}
-                        disabled={isLoading}
-                      >
+                      <IconButton type="button" onClick={prevStep}>
                         <FaArrowLeft className="text-white" />
                       </IconButton>
                       <Button
-                        loading={isLoading}
-                        type={"submit"}
+                        loading={registerLoading}
+                        type="submit"
                         disabled={!isValid || !dirty}
                       >
-                        {"Register"}
+                        Register
                       </Button>
                     </div>
                   </motion.div>
@@ -198,6 +216,7 @@ const Register = () => {
             );
           }}
         </Formik>
+
         <div className="my-6 flex items-center gap-6">
           <div className="w-full h-[0.5px] bg-gray-200" />
           <p>or</p>
@@ -220,33 +239,32 @@ const Register = () => {
 
 export default Register;
 
+// ✅ Password strength helper
 const PasswordChecker = ({ name }: any) => {
   const [field] = useField(name);
-
   const requirements = [
     { regex: /.{8,}/, label: "8+ characters" },
     { regex: /[A-Z]/, label: "UPPERCASE (A-Z)" },
     { regex: /[a-z]/, label: "lowercase (a-z)" },
     { regex: /[0-9]/, label: "Number (0-9)" },
-    { regex: /[!@#$%^&*(),.?":{}|<>]/, label: "Symbols (@ - . , _ # ? !)" },
+    { regex: /[!@#$%^&*(),.?\":{}|<>]/, label: "Symbols (@ - . , _ # ? !)" },
   ];
-
   const checkRequirement = (regex: any) => regex.test(field.value);
 
   return (
-    <div>
-      <div className="password-requirements">
-        {requirements.map((requirement, index) => (
-          <div
-            key={index}
-            className={`requirement ${
-              checkRequirement(requirement.regex) ? "met" : "unmet"
-            }`}
-          >
-            {requirement.label}
-          </div>
-        ))}
-      </div>
+    <div className="password-requirements">
+      {requirements.map((req, i) => (
+        <div
+          key={i}
+          className={`requirement ${
+            checkRequirement(req.regex)
+              ? "met text-green-400"
+              : "unmet text-gray-400"
+          }`}
+        >
+          {req.label}
+        </div>
+      ))}
     </div>
   );
 };

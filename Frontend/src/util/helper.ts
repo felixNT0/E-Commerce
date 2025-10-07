@@ -16,12 +16,11 @@ export const formikHelper = <T, key extends keyof T>(
 };
 
 // helper.ts
+
 export const getStoredJSONValuesFromLocalStorage = async (key: string) => {
   if (typeof window === "undefined") return null;
-  const value = localStorage.getItem(key);
   try {
-    const parsed = JSON.parse(value || "null");
-    return JSON.parse(JSON.stringify(parsed)); // sanitize
+    return JSON.parse(localStorage.getItem(key) || "null");
   } catch {
     return null;
   }

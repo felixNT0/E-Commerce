@@ -3,7 +3,7 @@ import { useLogin } from "@/api/auth";
 import Button from "@/component/button";
 import Input from "@/component/input";
 import routes from "@/routes";
-import { formikHelper } from "@/util/helper";
+import { formikHelper, setStoredJSONValuesToLocalStorage } from "@/util/helper";
 import { Form, Formik } from "formik";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -29,7 +29,7 @@ const Login = () => {
   const router = useRouter();
   const [error, setError] = useState("");
 
-  const { login, loginLoading, loginError, isError } = useLogin();
+  const { login, loginLoading, loginError, isError, loginData } = useLogin();
 
   const handleSubmit = async (values: any) => {
     const { email, password } = values;
@@ -38,15 +38,28 @@ const Login = () => {
       setIsLoading(true);
       setError("");
 
-      const response = await login({ userName: email, password });
-      console.log("Login response:", response);
-      // if (response?.data?.token) {
-      // setStoredJSONValuesToLocalStorage("token", response.data.token);
-      // enqueueSnackbar("Login successful", { variant: "success" });
-      // router.push(routes.app.home);
-      // }
-    } catch (e) {
-      enqueueSnackbar("An error occurred", { variant: "error" });
+      // API expects `userName` (see backend DTO). Send that instead of `email`.
+      const result = await login({ email, password });
+      console.log("Login payload:", { email, password });
+      console.log("Token:", result.token);
+
+      if (result?.token) {
+        await setStoredJSONValuesToLocalStorage("token", result.token);
+        enqueueSnackbar("Login successful", { variant: "success" });
+        router.push(routes.app.home);
+      } else {
+        setError("Login failed. Please check your credentials.");
+        enqueueSnackbar("Login failed. Please check your credentials.", {
+          variant: "error",
+        });
+      }
+    } catch (e: any) {
+      console.error("Login error:", e);
+      const errorMessage = e?.message || "An error occurred during login";
+      setError(errorMessage);
+      enqueueSnackbar(errorMessage, { variant: "error" });
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
