@@ -1,4 +1,4 @@
-import { LoginPayload } from "@/types/auth";
+import { LoginPayload, RegisterPayload } from "@/types/auth";
 import { mutator } from "@/util/axios";
 import { endpoints } from "@/util/endpoints";
 import { queryKeys } from "@/util/react-query";
@@ -36,35 +36,35 @@ export function useLogin() {
   );
 }
 
-// export function useRegister() {
-//   const queryClient = useQueryClient();
+export function useRegister() {
+  const queryClient = useQueryClient();
 
-//   const {data, isPending, mutateAsync} = useMutation<
-//     Response,
-//     any,
-//     RegisterPayload
-//   >({
-//     mutationFn: async (body: RegisterPayload) =>
-//       await mutator({
-//         url: endpoints.auth.register,
-//         data: body,
-//         method: 'POST',
-//       }),
+  const { data, isPending, mutateAsync } = useMutation<
+    Response,
+    any,
+    RegisterPayload
+  >({
+    mutationFn: async (body: RegisterPayload) =>
+      await mutator({
+        url: endpoints.auth.register,
+        data: body,
+        method: "POST",
+      }),
 
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({queryKey: queryKeys.user.root});
-//     },
-//   });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.user.root });
+    },
+  });
 
-//   return useMemo(
-//     () => ({
-//       registerData: data,
-//       registerLoading: isPending,
-//       register: mutateAsync,
-//     }),
-//     [isPending, data, mutateAsync],
-//   );
-// }
+  return useMemo(
+    () => ({
+      registerData: data,
+      registerLoading: isPending,
+      register: mutateAsync,
+    }),
+    [isPending, data, mutateAsync]
+  );
+}
 
 // export function useUpdateBio() {
 //   const queryClient = useQueryClient();

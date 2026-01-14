@@ -35,7 +35,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
   return (
     <motion.div
       key={item.id}
-      className="bg-white overflow-hidden p-4 rounded-lg shadow-md flex flex-col items-center transition-transform transform hover:scale-105 relative"
+      className="bg-white dark:bg-gray-800 overflow-hidden p-4 rounded-lg shadow-md flex flex-col items-center transition-transform transform hover:scale-105 relative"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -58,12 +58,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
         </button>
       </div>
       <div className="flex-1 w-full text-center mt-2">
-        <h2 className="text-lg font-semibold truncate">{item.name}</h2>
+        <h2 className="text-lg font-semibold dark:text-gray-300 truncate">
+          {item.name}
+        </h2>
         <div className="flex items-center justify-between py-0.5 px-1 border-t border-b border-gray-300 my-2">
-          <p className="text-gray-500 mb-1 truncate">
+          <p className="text-gray-500 dark:text-gray-400 mb-1 truncate">
             {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
           </p>
-          <p className="text-gray-700 font-bold">${item.price}</p>
+          <p className="text-gray-700 dark:text-gray-500 font-bold">
+            ${item.price}
+          </p>
         </div>
       </div>
       <Button
